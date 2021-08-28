@@ -1,0 +1,11 @@
+# vscode
+.vscode/
+
+# next
+.next/
+
+# node
+node_modules/
+
+# log files
+*.log
