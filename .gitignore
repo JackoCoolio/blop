@@ -3,6 +3,7 @@
 
 # next
 .next/
+dist/
 
 # node
 node_modules/
