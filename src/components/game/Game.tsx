@@ -1,8 +1,9 @@
 import { GameInterface } from "Lib/game"
 import { Component } from "react"
 
-interface GameProps {
+export interface GameProps {
   game: GameInterface
+  me: string
 }
 
-export class Game extends Component<GameProps, unknown> {}
+export class Game<S = {}> extends Component<GameProps, S> {}

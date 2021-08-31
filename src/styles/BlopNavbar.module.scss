@@ -1,15 +1,88 @@
-.navbar {
-  background-color: #FF331F;
+.main {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
 }
 
-a .button {
-  color: rgba(255, 255, 255, 0.75);
+.container {
+  max-width: 1320px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  overflow: hidden;
 }
 
-a .button:hover {
-  color: #ffffff;
+#dashboard {
+  --button-bg-color: var(--blop-red);
+}
+
+#profile {
+  --button-bg-color: var(--blop-green);
+}
+
+#settings {
+  --button-bg-color: var(--blop-yellow);
+}
+
+.link {
+  font-size: 0;
+  cursor: pointer;
+}
+
+#logoButton {
+  fill: var(--blop-white);
+}
+
+#logoButton:hover {
+  // animation: wiggle 0.2s cubic-bezier(.36, .07, .19, .97) both;
+  animation: wiggle 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.navElement {
+  position: relative;
+  display: inline-block;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.button {
+  border-radius: 50%;
+  border-color: var(--button-bg-color);
+  border-style: solid;
+  border-width: 3px;
+  fill: white;
+  transition: background-color 0.15s ease;
+}
+
+.button:hover {
+  // fill: #06060f;
+  background-color: var(--button-bg-color);
+  // animation: wiggle 0.2s cubic-bezier(.22, 1, 0.36, 1) both;
 }
 
 .icon {
-  vertical-align: middle;
+  position: relative;
+  height: 1rem;
+  margin: 1rem;
+  width: fit-content;
+}
+
+#logoButton > .icon {
+  height: 2rem;
+  width: fit-content;
+}
+
+@keyframes wiggle {
+  10% {
+    transform: rotate(-10deg) translate(-7px, 0px);
+  }
+
+  30% {
+    transform: rotate(10deg) translate(7px, 0px);
+  }
+
+  // 75% {
+  //   transform: rotate(10deg);
+  // }
 }

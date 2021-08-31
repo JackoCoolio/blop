@@ -10,3 +10,21 @@ declare module NodeJS {
 }
 
 declare var mongoose: MongooseState
+
+declare interface ErrorResponse {
+  error: string
+}
+
+declare interface FailedPrivateApiResponse {
+  statusCode: number
+  body: ErrorResponse
+}
+
+declare interface SuccessfulPrivateApiResponse<ApiResponseType> {
+  statusCode: number
+  body: ApiResponseType
+}
+
+declare type PrivateApiResponse<ApiResponseType> =
+  | SuccessfulPrivateApiResponse<ApiResponseType>
+  | FailedPrivateApiResponse

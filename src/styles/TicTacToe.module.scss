@@ -1,0 +1,32 @@
+.ttt {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  row-gap: 0.5rem;
+  column-gap: 0.5rem;
+}
+
+.square {
+  border-radius: 0.5rem;
+  padding: 1rem 1rem;
+  width: 5rem;
+  height: 5rem;
+  background-color: var(--blop-gray);
+
+  transition: transform 0.2s;
+}
+
+.square:hover:not(.x):not(.o) {
+  transform: scale(0.95);
+}
+
+.x {
+  fill: var(--blop-red);
+  width: 100%;
+  height: 100%;
+}
+
+.o {
+  fill: var(--blop-blue);
+  width: 100%;
+  height: 100%;
+}

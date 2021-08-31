@@ -11,6 +11,7 @@ interface GameHandlerComponentProps {
 interface GameHandlerComponentState {
   loaded: boolean
   gameInformation?: GameInterface
+  me?: string
 }
 
 class GameHandler extends Component<
@@ -26,17 +27,23 @@ class GameHandler extends Component<
   }
 
   async componentDidMount() {
-    const response = await fetch(`/api/game/${this.props.gameId}`, {
-      method: "get",
-    })
+    const [gameResponse, userResponse] = await Promise.all([
+      fetch(`/api/game/${this.props.gameId}`, {
+        method: "get",
+      }),
+      fetch(`/api/session`, {
+        method: "get",
+      }),
+    ])
 
     try {
-      var gameInformation = await response.json()
+      var gameInformation = await gameResponse.json()
+      var { userId } = await userResponse.json()
     } catch (e) {
       return console.error(`This game doesn't exist!`)
     }
 
-    this.setState({ gameInformation, loaded: true })
+    this.setState({ gameInformation, me: userId, loaded: true })
   }
 
   render() {
@@ -44,12 +51,15 @@ class GameHandler extends Component<
     let gameComponent
     switch (this.state.gameInformation?.type) {
       case "tictactoe":
-        gameComponent = <TicTacToe game={this.state.gameInformation} />
+        // we can assume that this.state.me is defined, because it is defined at the same time as gameInformation
+        gameComponent = (
+          <TicTacToe game={this.state.gameInformation} me={this.state.me!} />
+        )
     }
 
     return (
       <AppContainer>
-        <h1>{this.state.loaded ? gameComponent : "Loading..."}</h1>
+        {this.state.loaded ? gameComponent : <h1>"Loading..."</h1>}
       </AppContainer>
     )
   }

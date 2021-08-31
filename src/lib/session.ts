@@ -1,19 +1,25 @@
 import Session from "Models/Session"
 import User from "Models/User"
+import { throwsException } from "./util"
 
 export async function isSessionLoggedIn(session?: string): Promise<boolean> {
-  // if no ID was provided, the session is not logged in
-  if (!session) return false
+  return !(await throwsException(async () => {
+    await getUserDocFromSession(session)
+  }))
+}
+
+export async function getUserDocFromSession(session?: string) {
+  if (!session) throw "No session token!"
 
   const sessionDoc = await Session.findById(session)
 
-  if (!sessionDoc) return false
+  if (!sessionDoc) throw "Invalid session token!"
 
-  // in practice, we should be able to return true at this point, but we should probably check if the user actually exists
   const userDoc = await User.findById(sessionDoc.userId)
 
-  // return whether or not the user exists
-  return !!userDoc
+  if (!userDoc) throw "This user doesn't exist!"
+
+  return userDoc
 }
 
 export async function createNewSession(userId: string): Promise<string> {

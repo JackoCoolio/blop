@@ -1,36 +1,35 @@
 import styles from "Styles/BlopNavbar.module.scss"
 import Link from "next/link"
 import { Component } from "react"
-import { Container, Nav, Navbar } from "react-bootstrap"
-import fetch from 'node-fetch'
-import { PersonCircle, ArrowRightShort } from "react-bootstrap-icons"
-
-console.log(styles)
+import fetch from "node-fetch"
+import Logo from "../../public/blop.svg"
+import Dashboard from "../../public/dashboard.svg"
+import Profile from "../../public/profile.svg"
+import Settings from "../../public/settings.svg"
 
 interface NavbarState {
   loggedIn: boolean
 }
 
 export class BlopNavbar extends Component<unknown, NavbarState> {
-
   constructor(props: any) {
     super(props)
 
     this.state = {
-      loggedIn: false
+      loggedIn: false,
     }
   }
 
   async componentDidMount() {
     try {
-      const res = await fetch('/api/session', {
+      const res = await fetch("/api/session", {
         method: "get",
       })
 
       const json = await res.json()
 
       this.setState({
-        loggedIn: json.loggedIn
+        loggedIn: json.loggedIn,
       })
     } catch (e) {
       console.error(e)
@@ -40,39 +39,52 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
   render() {
     const { loggedIn } = this.state
 
-    let loginButton
-    if (loggedIn) {
-      loginButton = <Link href="/dashboard" passHref>
-        <Nav.Link><PersonCircle /></Nav.Link>
-      </Link>
-    } else {
-      loginButton = <Link href="/login" passHref>
-        <Nav.Link>Login <ArrowRightShort height="100%" alignmentBaseline="middle" className={styles.icon} /></Nav.Link>
-      </Link>
-    }
-
     return (
-      <Navbar className={styles.navbar}>
-        <Container>
-          <Link href="/" passHref>
-            <Navbar.Brand className={styles.button}>Blop</Navbar.Brand>
+      <nav className={styles.main}>
+        <div className={styles.container}>
+          <Link href="/">
+            <a className={styles.link} draggable={false}>
+              <div
+                className={styles.navElement}
+                id={styles.logoButton}
+                draggable={false}
+              >
+                <Logo className={styles.icon} draggable={false} />
+              </div>
+            </a>
           </Link>
-          <Navbar.Toggle aria-controls="basic-navbar-nav"></Navbar.Toggle>
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Link href="/" passHref>
-                <Nav.Link className={styles.button}>Home</Nav.Link>
-              </Link>
-              <Link href="/dashboard" passHref>
-                <Nav.Link className={styles.button} >Dashboard</Nav.Link>
-              </Link>
-            </Nav>
-            <Nav className="ms-auto">
-              {loginButton}
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+          <Link href="/dashboard">
+            <a className={styles.link} onDrag={() => false}>
+              <div
+                className={`${styles.button} ${styles.navElement}`}
+                id={styles.dashboard}
+              >
+                <Dashboard className={styles.icon} />
+              </div>
+            </a>
+          </Link>
+          <Link href={loggedIn ? "/profile" : "/login"}>
+            <a className={styles.link}>
+              <div
+                className={`${styles.button} ${styles.navElement}`}
+                id={styles.profile}
+              >
+                <Profile className={styles.icon} />
+              </div>
+            </a>
+          </Link>
+          <Link href="/settings">
+            <a className={styles.link}>
+              <div
+                className={`${styles.button} ${styles.navElement}`}
+                id={styles.settings}
+              >
+                <Settings className={styles.icon} />
+              </div>
+            </a>
+          </Link>
+        </div>
+      </nav>
     )
   }
 }
