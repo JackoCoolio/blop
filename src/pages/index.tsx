@@ -5,7 +5,6 @@ import fetch from "node-fetch"
 // import AppContainer from "Components/AppContainer"
 import Container from "react-bootstrap/Container"
 import { Button, Col, Row } from "react-bootstrap"
-import AppContainer from "Components/AppContainer"
 
 interface HomeState {
   loggedIn: boolean

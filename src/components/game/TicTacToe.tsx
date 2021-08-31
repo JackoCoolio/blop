@@ -1,19 +1,11 @@
 import styles from "Styles/TicTacToe.module.scss"
 import { Game, GameProps } from "Components/game/Game"
 import fetch from "node-fetch"
-import { TicTacToeGameInterface, TicTacToePiece } from "Lib/game/tictactoe"
-import { GameInterface, isUsersTurn } from "Lib/game"
+import { TicTacToeGameInterface } from "Lib/game/tictactoe"
+import { isUsersTurn } from "Lib/game"
 import update from "immutability-helper"
 import XSvg from "../../../public/ttt-x.svg"
 import OSvg from "../../../public/ttt-o.svg"
-
-async function handleSquareClick(
-  game: TicTacToeGameInterface,
-  i: number
-): Promise<void> {
-  // this needs to change
-  game.state.board[i] = "x"
-}
 
 interface TicTacToeState {
   game: TicTacToeGameInterface // i forsee this being an issue, once i add more games
@@ -36,13 +28,6 @@ export class TicTacToe extends Game<TicTacToeState> {
     for (let i = 0; i < 9; i++) {
       const sq = this.state.game.state.board[i]
 
-      let cls = ""
-      if (sq === "x") {
-        cls = styles.x
-      } else if (sq === "o") {
-        cls = styles.o
-      }
-
       let content
       if (sq === "x") {
         content = <XSvg className={styles.x}></XSvg>
@@ -54,7 +39,7 @@ export class TicTacToe extends Game<TicTacToeState> {
         <div
           key={i}
           className={styles.square}
-          onClick={async e => {
+          onClick={async () => {
             if (!this.state.myTurn) return
 
             const piece = "x"

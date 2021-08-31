@@ -4,7 +4,7 @@ import Game from "Models/Game"
 import { ResponseCode } from "Lib/util"
 import { parseCookies } from "nookies"
 import { getSessionInformation } from "../../session"
-import { isFailedResponse, isSuccessfulResponse } from "Lib/response"
+import { isFailedResponse } from "Lib/response"
 
 const handler = nextConnect()
 

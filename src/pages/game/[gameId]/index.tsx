@@ -59,7 +59,7 @@ class GameHandler extends Component<
 
     return (
       <AppContainer>
-        {this.state.loaded ? gameComponent : <h1>"Loading..."</h1>}
+        {this.state.loaded ? gameComponent : <h1>Loading...</h1>}
       </AppContainer>
     )
   }
