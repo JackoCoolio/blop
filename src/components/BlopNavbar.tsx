@@ -6,6 +6,7 @@ import Logo from "../../public/blop.svg"
 import Dashboard from "../../public/dashboard.svg"
 import Profile from "../../public/profile.svg"
 import Settings from "../../public/settings.svg"
+import CreateGame from "../../public/plus.svg"
 
 interface NavbarState {
   loggedIn: boolean
@@ -42,14 +43,13 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
     return (
       <nav className={styles.main}>
         <div className={styles.container}>
-          <Link href="/">
-            <a className={styles.link} draggable={false}>
+          <Link href="/create">
+            <a className={styles.link}>
               <div
-                className={styles.navElement}
-                id={styles.logoButton}
-                draggable={false}
+                className={`${styles.button} ${styles.navElement}`}
+                id={styles.createGame}
               >
-                <Logo className={styles.icon} draggable={false} />
+                <CreateGame className={styles.icon} />
               </div>
             </a>
           </Link>
@@ -60,6 +60,17 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
                 id={styles.dashboard}
               >
                 <Dashboard className={styles.icon} />
+              </div>
+            </a>
+          </Link>
+          <Link href="/">
+            <a className={styles.link} draggable={false}>
+              <div
+                className={styles.navElement}
+                id={styles.logoButton}
+                draggable={false}
+              >
+                <Logo className={styles.icon} draggable={false} />
               </div>
             </a>
           </Link>
