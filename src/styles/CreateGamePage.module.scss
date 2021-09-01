@@ -1,0 +1,58 @@
+#main {
+  position: relative;
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 40% 60%;
+  overflow: hidden;
+}
+
+#listPane {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: grid;
+  grid-template-columns: auto;
+  row-gap: 0.5rem;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+#settingsPane {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+#startButton {
+  border-radius: 1rem;
+  border-color: var(--blop-red);
+  border-width: 2px;
+  border-style: solid;
+  background-color: transparent;
+  color: var(--blop-white);
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+
+  transition: background-color 0.2s ease;
+}
+
+#startButton.disabled {
+  cursor: initial;
+  border-color: var(--blop-gray);
+}
+
+#startButton:hover:not(.disabled) {
+  background-color: var(--blop-red);
+}
+
+.selected {
+  border-color: var(--blop-green);
+}
+
+@media screen and (max-width: 600px) {
+}
