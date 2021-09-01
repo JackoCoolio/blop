@@ -32,3 +32,11 @@ main {
 a {
   text-decoration: none;
 }
+
+#blop {
+  position: absolute;
+  display: grid;
+  grid-template-rows: 5rem auto;
+  width: 100vw;
+  height: 100vh;
+}

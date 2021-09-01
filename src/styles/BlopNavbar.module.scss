@@ -1,5 +1,7 @@
 .main {
-  position: relative;
+  position: sticky;
+  background-color: var(--blop-black);
+  top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,8 +87,4 @@
   30% {
     transform: rotate(10deg) translate(7px, 0px);
   }
-
-  // 75% {
-  //   transform: rotate(10deg);
-  // }
 }
