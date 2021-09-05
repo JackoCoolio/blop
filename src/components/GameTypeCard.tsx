@@ -1,35 +1,42 @@
 import styles from "Styles/GameCard.module.scss"
 import { GameType } from "Lib/game"
 import { Component } from "react"
-import update from "immutability-helper"
 import classNames from "classnames"
 
-type GameCardOnClick = (code: GameType, self: GameCard) => void
+type GameTypeCardOnClick = (metadata: GameMetadata, self: GameTypeCard) => void
 
 export interface GameMetadata {
   title: string
   code: GameType
   description: string
-  numPlayers: string
+  minPlayers: number
+  maxPlayers: number
 }
 
-interface GameCardProps {
+interface GameTypeCardProps {
   metadata: GameMetadata
-  onClick?: GameCardOnClick
+  onClick?: GameTypeCardOnClick
   selected: boolean
 }
 
-export class GameCard extends Component<GameCardProps> {
-  constructor(props: GameCardProps) {
+export class GameTypeCard extends Component<GameTypeCardProps> {
+  constructor(props: GameTypeCardProps) {
     super(props)
   }
 
   render(): JSX.Element {
+    const { minPlayers, maxPlayers } = this.props.metadata
+    let players
+    if (minPlayers === maxPlayers) {
+      players = "" + minPlayers
+    } else {
+      players = minPlayers + " - " + maxPlayers
+    }
+
     return (
       <a
         onClick={() => {
-          if (this.props.onClick)
-            this.props.onClick(this.props.metadata.code, this)
+          if (this.props.onClick) this.props.onClick(this.props.metadata, this)
         }}
       >
         <div
@@ -39,7 +46,7 @@ export class GameCard extends Component<GameCardProps> {
         >
           <h1>{this.props.metadata.title}</h1>
           <p>{this.props.metadata.description}</p>
-          <p>Players: {this.props.metadata.numPlayers}</p>
+          <p>Players: {players}</p>
         </div>
       </a>
     )

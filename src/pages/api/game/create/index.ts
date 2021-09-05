@@ -5,6 +5,10 @@ import { parseCookies } from "nookies"
 import { getUserDocFromSession } from "Lib/session"
 import { createTicTacToeGame } from "Models/Game"
 import { ResponseCode } from "Lib/util"
+import {
+  authenticationMiddleware,
+  AuthenticatedRequest,
+} from "Middleware/loginChecker"
 
 interface GameCreateBody {
   type: GameType
@@ -29,20 +33,10 @@ function parseBody(body: any): Promise<GameCreateBody> {
 
 const handler = nextConnect()
 
-handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const cookies = parseCookies({ req })
-    const session = cookies.session
+handler.use(authenticationMiddleware)
 
-    const userDoc = await getUserDocFromSession(session)
-
-    if (!userDoc) {
-      console.log("not logged in")
-      return res
-        .status(ResponseCode.UNAUTHORIZED)
-        .json({ error: "Session must be logged in to create a game." })
-    }
-
+handler.post(
+  async (req: AuthenticatedRequest & NextApiRequest, res: NextApiResponse) => {
     try {
       // parse the request body
       var { type } = await parseBody(req.body)
@@ -55,7 +49,7 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     let gameDoc
     switch (type) {
       case "tictactoe":
-        gameDoc = await createTicTacToeGame([userDoc._id])
+        gameDoc = await createTicTacToeGame([req.userId])
         break
       default:
         return res
@@ -65,9 +59,7 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
 
     console.log("returning new game info")
     return res.status(ResponseCode.CREATED).json({ id: gameDoc._id })
-  } catch (e) {
-    console.error(e)
   }
-})
+)
 
 export default handler

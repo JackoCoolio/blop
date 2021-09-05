@@ -25,6 +25,10 @@ body {
   overflow: hidden;
 }
 
+::selection {
+  background-color: var(--blop-red);
+}
+
 main {
   padding-top: 3rem;
 }
