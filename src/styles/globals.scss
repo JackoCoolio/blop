@@ -1,7 +1,6 @@
 // $body-bg: #06060f;
 // $body-color: #ffffff;
 
-@import "~bootstrap/scss/bootstrap";
 @import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
 
 :root {
@@ -18,11 +17,14 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: Rubik, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   background-color: #06060f;
   color: var(--blop-white);
   overflow: hidden;
+}
+
+* {
+  font-family: Rubik, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
 main {

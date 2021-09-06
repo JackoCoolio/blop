@@ -11,10 +11,7 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 if (!process.env.MONGODB_URI) throw new Error(".env is missing a MongoDB URI.")
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGODB_URI)
 
 const db = mongoose.connection
 

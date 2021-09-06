@@ -13,7 +13,6 @@ module.exports = {
     ]
   },
   webpack(config) {
-    console.log(config)
     config.module.rules.push({
       test: /\.svg$/,
       use: [ "@svgr/webpack" ]
