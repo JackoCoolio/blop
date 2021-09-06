@@ -1,7 +1,6 @@
 import styles from "Styles/GameCard.module.scss"
 import { GameType } from "Lib/game"
 import { Component } from "react"
-import update from "immutability-helper"
 import classNames from "classnames"
 
 type GameCardOnClick = (code: GameType, self: GameCard) => void

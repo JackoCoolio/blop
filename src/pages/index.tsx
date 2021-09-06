@@ -3,8 +3,6 @@ import { Component } from "react"
 // import styles from "Styles/Home.module.scss"
 import fetch from "node-fetch"
 // import AppContainer from "Components/AppContainer"
-import Container from "react-bootstrap/Container"
-import { Button, Col, Row } from "react-bootstrap"
 
 interface HomeState {
   loggedIn: boolean
@@ -44,19 +42,7 @@ export default class Home extends Component<unknown, HomeState> {
         </Head>
 
         <main>
-          <Container>
-            <Row>
-              <Col>
-                <div>
-                  <h1>Blop</h1>
-                  <p>Blop is a game.</p>
-                </div>
-              </Col>
-              <Col>
-                <Button>Get Started!</Button>
-              </Col>
-            </Row>
-          </Container>
+          <h1>Blop</h1>
         </main>
 
         {/* <h1>Blop</h1>
