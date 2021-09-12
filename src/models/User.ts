@@ -4,6 +4,7 @@ import { nanoid } from "nanoid"
 // funny name for this one :)
 export interface UserInterface {
   _id: string
+  newUser: boolean
   discordId: string
   refreshToken: string
   games: string[]
@@ -18,9 +19,12 @@ const UserSchema = new mongoose.Schema<
     type: String,
     default: () => nanoid(),
   },
+  newUser: {
+    type: Boolean,
+    default: true
+  },
   discordId: {
     type: String,
-    required: true,
   },
   refreshToken: {
     type: String,
