@@ -9,6 +9,22 @@ import { createNewSession } from "Lib/session"
 
 const handler = nextConnect()
 
+async function fetchToken(params: URLSearchParams): Promise<{ accessToken: string, refreshToken: string }> {
+  const response = await fetch("https://discord.com/api/v8/oauth2/token", {
+    method: "post",
+    body: params.toString(),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    }
+  })
+  const json = await response.json()
+
+  return {
+    accessToken: json["access_token"],
+    refreshToken: json["refresh_token"],
+  }
+}
+
 handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   if (!req.url) throw new Error("No URL!")
 
@@ -22,71 +38,45 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
     return res.redirect("/")
   }
 
-  const body = new URLSearchParams()
-  body.append("client_id", process.env.DISCORD_CLIENT_ID)
-  body.append("client_secret", process.env.DISCORD_CLIENT_SECRET)
-  body.append("grant_type", "authorization_code")
-  body.append("code", code)
-  body.append("redirect_uri", process.env.REDIRECT_URI)
+  const body = new URLSearchParams({
+    client_id: process.env.DISCORD_CLIENT_ID,
+    client_secret: process.env.DISCORD_CLIENT_SECRET,
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: process.env.REDIRECT_URI,
+  })
 
-  try {
-    var response = await fetch("https://discord.com/api/oauth2/token", {
-      method: "post",
-      body: body.toString(),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+  const { accessToken, refreshToken } = await fetchToken(body)
+
+  var userDoc = await User.findOne({ refreshToken })
+  if (userDoc) {
+    var userId = userDoc._id
+  } else {
+    userDoc = await User.create({
+      refreshToken,
     })
-  } catch (e) {
-    return console.error(e)
+    var userId = userDoc._id
   }
 
-  response.json().then(async json => {
-    const accessToken = json["access_token"]
-    const refreshToken = json["refresh_token"]
-
-    try {
-      var profile = await getUser(accessToken)
-    } catch (e) {
-      return res.redirect("/")
-    }
-
-    // find the user with the given discord ID
-    var userDoc = await User.findOne({ discordId: profile.id })
-
-    // get that user's discord ID if they exist
-    var userId = userDoc?._id
-
-    if (!userDoc) {
-      userDoc = await User.create({
-        discordId: profile.id,
-        refreshToken,
-      })
-      userId = userDoc._id
-    } else {
-      await User.updateOne(
-        {
-          discordId: profile.id,
-        },
-        {
-          $set: { refreshToken },
-        }
-      )
-    }
-
-    // create a new session
-    const sessionId = await createNewSession(userId)
-
-    // set the cookie (and make it httpOnly)
-    setCookie({ res }, "session", sessionId, {
-      httpOnly: true,
-      secure: false,
-      path: "/",
-    })
-
-    // go to dashboard
-    res.redirect("/dashboard")
+  const sessionId = await createNewSession(userId)
+  setCookie({ res }, "session", sessionId, {
+    httpOnly: true,
+    secure: false,
+    path: "/",
   })
+
+  res.redirect("/dashboard")
+
+  if (userDoc.newUser) {
+    // set up new user
+
+    const discordProfile = await getUser(accessToken)
+
+    userDoc.discordId = discordProfile.id
+    userDoc.newUser = false
+
+    await userDoc.save()
+  }
 })
 
 export default handler
