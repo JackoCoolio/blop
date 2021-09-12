@@ -9,13 +9,15 @@ import { createNewSession } from "Lib/session"
 
 const handler = nextConnect()
 
-async function fetchToken(params: URLSearchParams): Promise<{ accessToken: string, refreshToken: string }> {
+async function fetchToken(
+  params: URLSearchParams
+): Promise<{ accessToken: string; refreshToken: string }> {
   const response = await fetch("https://discord.com/api/v8/oauth2/token", {
     method: "post",
     body: params.toString(),
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-    }
+    },
   })
   const json = await response.json()
 

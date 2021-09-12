@@ -1,0 +1,29 @@
+#main {
+  position: relative;
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 40% 60%;
+  column-gap: 3rem;
+  overflow: hidden;
+}
+
+#invitesPane {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: grid;
+  grid-template-columns: auto;
+  row-gap: 0.5rem;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+#gamesPane {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: grid;
+  grid-template-columns: auto;
+  row-gap: 0.5rem;
+  width: 100%;
+  overflow-y: scroll;
+}

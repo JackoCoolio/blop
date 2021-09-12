@@ -8,6 +8,7 @@ export interface UserInterface {
   discordId: string
   refreshToken: string
   games: string[]
+  pendingInvites: string[]
 }
 
 const UserSchema = new mongoose.Schema<
@@ -21,7 +22,7 @@ const UserSchema = new mongoose.Schema<
   },
   newUser: {
     type: Boolean,
-    default: true
+    default: true,
   },
   discordId: {
     type: String,
@@ -31,6 +32,10 @@ const UserSchema = new mongoose.Schema<
     required: true,
   },
   games: {
+    type: [String],
+    default: [],
+  },
+  pendingInvites: {
     type: [String],
     default: [],
   },

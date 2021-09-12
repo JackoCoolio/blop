@@ -24,7 +24,8 @@
       "Components/*": [ "src/components/*" ],
       "Lib/*": [ "src/lib/*" ],
       "Models/*": [ "src/models/*" ],
-      "Styles/*": [ "src/styles/*" ]
+      "Styles/*": [ "src/styles/*" ],
+      "Middleware/*": [ "src/middleware/*" ]
     }
   },
   "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx"],

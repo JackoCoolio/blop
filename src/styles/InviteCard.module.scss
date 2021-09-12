@@ -1,0 +1,41 @@
+.main {
+  user-select: none;
+  display: grid;
+  grid-template-columns: auto auto;
+  flex-direction: row;
+
+  align-content: center;
+  justify-content: space-between;
+
+  border-width: 2px;
+  border-radius: 1rem;
+  border-color: var(--blop-blue);
+  border-style: solid;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 50%;
+  height: 3rem;
+
+  margin-bottom: 1rem;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.x {
+  margin: auto auto;
+  height: 1rem;
+  width: 1rem;
+  fill: var(--blop-white);
+  transition: fill 0.2s ease;
+}
+
+.x:hover {
+  cursor: pointer;
+  fill: var(--blop-red);
+}

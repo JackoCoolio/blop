@@ -26,6 +26,25 @@
   width: 100%;
 }
 
+#inviteField {
+  width: 50%;
+  height: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  background-color: var(--blop-black);
+  color: var(--blop-white);
+  border-radius: 1rem;
+  border-style: solid;
+  border-color: var(--blop-gray);
+
+  transition: border-color 0.2s ease;
+}
+
+#inviteField:focus {
+  outline: none;
+  border-color: var(--blop-green);
+}
+
 #startButton {
   border-radius: 1rem;
   border-color: var(--blop-red);

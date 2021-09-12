@@ -27,6 +27,10 @@ body {
     Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+::selection {
+  background-color: var(--blop-red);
+}
+
 main {
   padding-top: 3rem;
 }
