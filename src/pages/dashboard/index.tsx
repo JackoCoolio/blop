@@ -1,6 +1,8 @@
 import styles from "Styles/Dashboard.module.scss"
 import { withRouter, Router } from "next/router"
 import { Component } from "react"
+import { parseCookies } from "nookies"
+import { isSessionLoggedIn } from "Lib/session"
 
 interface DashboardProps {
   router: Router
@@ -28,6 +30,24 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
         </div>
       </div>
     )
+  }
+}
+
+export async function getServerSideProps({ req, res, router }: any) {
+  const { session } = parseCookies({ req })
+  const isLoggedIn = await isSessionLoggedIn(session)
+
+  if (!isLoggedIn) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    }
+  } else {
+    return {
+      props: {},
+    }
   }
 }
 

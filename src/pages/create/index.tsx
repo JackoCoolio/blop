@@ -6,6 +6,8 @@ import { GameTypeCard, GameMetadata } from "Components/GameTypeCard"
 import { InviteListItem } from "Components/InviteListItem"
 import update from "immutability-helper"
 import fetch from "node-fetch"
+import { parseCookies } from "nookies"
+import { isSessionLoggedIn } from "Lib/session"
 
 const games: GameMetadata[] = [
   {
@@ -39,10 +41,7 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
       maxAllowedInvites: 0,
       inviteField: null,
 
-      // testing purposes
       invitees: [],
-      selectedCard: 0,
-      selectedGameType: "tictactoe",
     }
 
     this.createGame = this.createGame.bind(this)
@@ -166,6 +165,24 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
         </div>
       </div>
     )
+  }
+}
+
+export async function getServerSideProps({ req, res, router }: any) {
+  const { session } = parseCookies({ req })
+  const isLoggedIn = await isSessionLoggedIn(session)
+
+  if (!isLoggedIn) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    }
+  } else {
+    return {
+      props: {},
+    }
   }
 }
 

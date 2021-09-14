@@ -1,11 +1,13 @@
 import Session from "Models/Session"
 import User from "Models/User"
-import { throwsException } from "./util"
+import { getSessionInformation } from "src/pages/api/session"
+import { isSuccessfulResponse } from "./response"
 
 export async function isSessionLoggedIn(session?: string): Promise<boolean> {
-  return !(await throwsException(async () => {
-    await getUserDocFromSession(session)
-  }))
+  if (!session) return false
+
+  const sessionResponse = await getSessionInformation(session)
+  return isSuccessfulResponse(sessionResponse) && sessionResponse.body.loggedIn
 }
 
 export async function getUserDocFromSession(session?: string) {
