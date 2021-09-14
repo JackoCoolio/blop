@@ -1,23 +1,23 @@
 module.exports = {
   reactStrictMode: true,
   eslint: {
-    dirs: ['src/']
+    dirs: ["src/"],
   },
   async redirects() {
     return [
       {
         source: "/login",
         destination: process.env.DISCORD_AUTH_URL,
-        permanent: false
-      }
+        permanent: false,
+      },
     ]
   },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: [ "@svgr/webpack" ]
+      use: ["@svgr/webpack"],
     })
 
     return config
-  }
+  },
 }
