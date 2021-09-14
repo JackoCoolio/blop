@@ -7,6 +7,7 @@ import Dashboard from "../../public/dashboard.svg"
 import Profile from "../../public/profile.svg"
 import Settings from "../../public/settings.svg"
 import CreateGame from "../../public/plus.svg"
+import GithubLogo from "../../public/github.svg"
 
 interface NavbarState {
   loggedIn: boolean
@@ -94,6 +95,11 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
               </div>
             </a>
           </Link>
+        </div>
+        <div id={styles.rightContainer}>
+          <a href="https://github.com/JackoCoolio/blop">
+            <GithubLogo id={styles.githubButton} />
+          </a>
         </div>
       </nav>
     )

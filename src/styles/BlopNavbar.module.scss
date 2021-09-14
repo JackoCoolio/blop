@@ -17,6 +17,12 @@
   align-items: center;
 }
 
+#rightContainer {
+  display: flex;
+  position: absolute;
+  right: 1.5rem;
+}
+
 #dashboard {
   --button-bg-color: var(--blop-red);
 }
@@ -45,6 +51,15 @@
 #logoButton:hover {
   // animation: wiggle 0.2s cubic-bezier(.36, .07, .19, .97) both;
   animation: wiggle 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+#githubButton {
+  fill: var(--blop-white);
+  transition: transform 0.2s ease;
+}
+
+#githubButton:hover {
+  transform: scale(0.95);
 }
 
 .navElement {
