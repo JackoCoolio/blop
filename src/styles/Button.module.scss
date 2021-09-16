@@ -1,0 +1,40 @@
+.blue {
+  --button-color: var(--blop-blue);
+}
+
+.red {
+  --button-color: var(--blop-red);
+}
+
+.green {
+  --button-color: var(--blop-green);
+}
+
+.yellow {
+  --button-color: var(--blop-yellow);
+}
+
+.button {
+  border-radius: 1em;
+  border-color: var(--button-color);
+  border-width: 2px;
+  border-style: solid;
+  background-color: transparent;
+  color: var(--blop-white);
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 2em;
+  padding-right: 2em;
+  cursor: pointer;
+
+  transition: background-color 0.2s ease;
+}
+
+.button.disabled {
+  cursor: initial;
+  border-color: var(--blop-gray);
+}
+
+.button:hover:not(.disabled) {
+  background-color: var(--button-color);
+}

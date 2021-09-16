@@ -8,6 +8,7 @@ import update from "immutability-helper"
 import fetch from "node-fetch"
 import { parseCookies } from "nookies"
 import { isSessionLoggedIn } from "Lib/session"
+import { Button } from "Components/Button"
 
 const games: GameMetadata[] = [
   {
@@ -153,15 +154,16 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
             onKeyDown={this.handleInputKey}
           ></input>
           {inviteCards}
-          <button
-            id={styles.startButton}
-            className={!this.state.selectedGameType ? styles.disabled : ""}
+          <Button
+            disabled={!this.state.selectedGameType}
+            color="red"
             onClick={async () => {
               await this.createGame()
             }}
+            id={styles.startButton}
           >
             Start
-          </button>
+          </Button>
         </div>
       </div>
     )
