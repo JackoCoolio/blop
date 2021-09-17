@@ -46,27 +46,7 @@
 }
 
 #startButton {
-  border-radius: 1rem;
-  border-color: var(--blop-red);
-  border-width: 2px;
-  border-style: solid;
-  background-color: transparent;
-  color: var(--blop-white);
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-
-  transition: background-color 0.2s ease;
-}
-
-#startButton.disabled {
-  cursor: initial;
-  border-color: var(--blop-gray);
-}
-
-#startButton:hover:not(.disabled) {
-  background-color: var(--blop-red);
+  font-size: 18px;
 }
 
 .selected {
