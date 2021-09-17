@@ -67,17 +67,17 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
     path: "/",
   })
 
-  res.redirect("/dashboard")
-
   if (userDoc.newUser) {
     // set up new user
+    res.redirect("/profile/setup")
 
     const discordProfile = await getUser(accessToken)
 
     userDoc.discordId = discordProfile.id
-    userDoc.newUser = false
 
     await userDoc.save()
+  } else {
+    res.redirect("/dashboard")
   }
 })
 
