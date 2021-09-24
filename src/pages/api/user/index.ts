@@ -33,7 +33,6 @@ export async function getMatchingUsers(
   >
 > {
   const keys = Object.keys(options)
-  console.log(keys)
 
   for (const key of keys) {
     if (!allowedOptions.includes(key)) {
@@ -73,11 +72,43 @@ export async function getMatchingUsers(
   }
 }
 
-handler.get(
+handler.post(
   async (req: NextApiRequest & AuthenticatedRequest, res: NextApiResponse) => {
-    const response = await getMatchingUsers(req.body)
+    const response = await getMatchingUsers(JSON.parse(req.body))
 
     return res.status(response.statusCode).json(response.body)
+  }
+)
+
+handler.patch(
+  async (req: NextApiRequest & AuthenticatedRequest, res: NextApiResponse) => {
+    const { username } = JSON.parse(req.body)
+    const { userId } = req
+
+    if (username) {
+      try {
+        const userDoc = await User.findById(userId)
+        if (!userDoc) return console.error("User couldn't be found!")
+
+        userDoc.username = username
+
+        if (userDoc.newUser) {
+          userDoc.newUser = false
+        }
+
+        await userDoc.save()
+
+        return res.status(ResponseCode.NO_CONTENT).end()
+      } catch (e) {
+        return res
+          .status(ResponseCode.BAD_REQUEST)
+          .json({ error: "That username already exists!" })
+      }
+    }
+
+    res.status(ResponseCode.BAD_REQUEST).json({
+      error: "No valid parameters assigned!",
+    })
   }
 )
 

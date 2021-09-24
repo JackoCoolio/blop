@@ -1,27 +1,98 @@
 import styles from "Styles/ProfileSetupPage.module.scss"
-import { Component } from "react"
+import React, { Component } from "react"
 import { Button } from "Components/Button"
 import { parseCookies } from "nookies"
-import { getUserDocFromSession, isSessionLoggedIn } from "Lib/session"
 import User from "Models/User"
 import { getSessionInformation } from "src/pages/api/session"
 import { isSuccessfulResponse } from "Lib/response"
+import fetch from "node-fetch"
+import { ResponseCode } from "Lib/util"
+import { Router, withRouter } from "next/router"
 
-interface State {
-  dis: boolean
+const bannedUsernameCharactersRegex = /[^A-Za-z0-9\-_]/
+
+interface ProfileSetupPageState {
+  usernameInput: React.RefObject<HTMLInputElement>
+  errorMessage: string
+  valid: boolean
 }
 
-class ProfileSetupPage extends Component<unknown, State> {
+interface ProfileSetupPageProps {
+  router: Router
+}
+
+class ProfileSetupPage extends Component<
+  ProfileSetupPageProps,
+  ProfileSetupPageState
+> {
   constructor(props: any) {
     super(props)
 
     this.state = {
-      dis: false,
+      usernameInput: React.createRef(),
+      errorMessage: "",
+      valid: false,
     }
   }
 
+  async isFormValid(local = true): Promise<boolean> {
+    const username = this.state.usernameInput.current?.value
+    if (
+      !username ||
+      username.length < 4 ||
+      username.length > 16 ||
+      bannedUsernameCharactersRegex.test(username)
+    ) {
+      return false
+    }
+
+    if (!local) {
+      const response = await fetch("/api/user", {
+        method: "POST",
+        body: JSON.stringify({
+          username,
+        }),
+      }).then(x => x.json())
+
+      console.log(response)
+
+      if (response.matches.length > 0) {
+        return false
+      }
+    }
+
+    return true
+  }
+
   async submitProfileSettings() {
-    console.log("Profile settings updating...")
+    const valid = await this.isFormValid(false)
+
+    if (valid) {
+      const username = this.state.usernameInput.current!.value
+
+      const response = await fetch("/api/user/", {
+        method: "PATCH",
+        body: JSON.stringify({
+          username,
+        }),
+      })
+
+      if (response.status !== ResponseCode.NO_CONTENT) {
+        const { error } = await response.json()
+
+        if (error) {
+          this.setState({
+            errorMessage: error,
+          })
+        }
+      } else {
+        this.props.router.push("/create")
+      }
+    } else {
+      this.setState({
+        errorMessage: "There was an error submitting!",
+      })
+    }
   }
 
   render() {
@@ -36,6 +107,7 @@ class ProfileSetupPage extends Component<unknown, State> {
                 id={styles.usernameInput}
                 type="text"
                 autoFocus
+                ref={this.state.usernameInput}
                 onKeyPress={e => {
                   const value = e.currentTarget.value
 
@@ -45,9 +117,14 @@ class ProfileSetupPage extends Component<unknown, State> {
                     e.preventDefault()
                   }
 
-                  if (!/[A-Za-z0-9\-_]/.test(e.key)) {
+                  if (bannedUsernameCharactersRegex.test(e.key)) {
                     e.preventDefault()
                   }
+                }}
+                onKeyUp={async () => {
+                  this.setState({
+                    valid: await this.isFormValid(),
+                  })
                 }}
               />
             </div>
@@ -55,12 +132,13 @@ class ProfileSetupPage extends Component<unknown, State> {
               <Button
                 id={styles.submitButton}
                 color="blue"
-                disabled={this.state.dis}
+                disabled={!this.state.valid}
                 onClick={this.submitProfileSettings.bind(this)}
               >
                 Submit
               </Button>
             </div>
+            <span>{this.state.errorMessage}</span>
           </div>
         </div>
       </div>
@@ -102,4 +180,4 @@ export async function getServerSideProps({ req }: any) {
   }
 }
 
-export default ProfileSetupPage
+export default withRouter(ProfileSetupPage)

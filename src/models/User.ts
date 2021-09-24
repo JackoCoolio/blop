@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema<
   },
   username: {
     type: String,
+    unique: true,
   },
   newUser: {
     type: Boolean,
