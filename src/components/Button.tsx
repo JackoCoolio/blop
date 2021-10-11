@@ -7,8 +7,12 @@ interface ButtonProps {
   color: "blue" | "red" | "green" | "yellow"
   onClick: MouseEventHandler<HTMLButtonElement>
   disabled?: boolean
+  className?: string
 }
 
+/**
+ * A blop-styled button element.
+ */
 export class Button extends Component<ButtonProps> {
   render() {
     const { disabled = false } = this.props
@@ -19,6 +23,7 @@ export class Button extends Component<ButtonProps> {
           styles[this.props.color],
           styles.button,
           disabled ? styles.disabled : "",
+          this.props.className,
         ])}
         onClick={disabled ? () => {} : this.props.onClick}
       >
