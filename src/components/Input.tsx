@@ -55,8 +55,9 @@ export class Input extends Component<InputProps, InputState> {
    * @returns a string
    */
   getValue(): string {
-    return (
-      this.state.inputElement.current?.value || this.props.defaultValue || ""
-    )
+    if (typeof this.state.inputElement.current?.value === "string")
+      return this.state.inputElement.current.value
+
+    return this.props.defaultValue || ""
   }
 }
