@@ -1,0 +1,37 @@
+.blue {
+  --input-color: var(--blop-blue);
+}
+
+.red {
+  --input-color: var(--blop-red);
+}
+
+.green {
+  --input-color: var(--blop-green);
+}
+
+.yellow {
+  --input-color: var(--blop-yellow);
+}
+
+.input {
+  padding: 0 0;
+  width: 15.5em;
+  height: 3em;
+  text-align: center;
+  background-color: inherit;
+  color: var(--blop-white);
+  border-style: none;
+  border-bottom: solid 3px var(--blop-gray);
+  margin-bottom: -3px;
+  text-align: left;
+  font-size: 1.5rem;
+
+  transition: border-color 0.2s ease;
+  cursor: text;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--input-color);
+}
