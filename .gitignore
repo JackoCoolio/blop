@@ -13,3 +13,6 @@ node_modules/
 
 # .env
 *.env
+
+# dev api paths
+src/pages/api/dev

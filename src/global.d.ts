@@ -28,3 +28,8 @@ declare interface SuccessfulPrivateApiResponse<ApiResponseType> {
 declare type PrivateApiResponse<ApiResponseType> =
   | SuccessfulPrivateApiResponse<ApiResponseType>
   | FailedPrivateApiResponse
+
+declare interface ApiError {
+  message: string
+  statusCode: number
+}
