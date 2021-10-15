@@ -30,7 +30,6 @@ export async function getFriendsList(
   userId: string,
   includeRequests: boolean = true
 ): Promise<Result<UserFacingFriendInterface[], ApiError>> {
-
   // find the user's friends list document
   const friendsListDoc = await FriendsList.findById(userId)
 
@@ -84,7 +83,6 @@ export async function sendFriendInvite(
   userId: string,
   targetId: string
 ): Promise<Result<void, ApiError>> {
-
   // make sure the user isn't trying to friend themselves
   if (userId === targetId) {
     return err({
