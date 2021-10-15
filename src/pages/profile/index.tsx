@@ -21,6 +21,7 @@ interface ProfilePageState {
   usernameInput: React.RefObject<Input>
   valid: boolean
   errorMessage: string
+  currentUsername: string | null
 }
 
 class ProfilePage extends Component<unknown, ProfilePageState> {
@@ -32,6 +33,7 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
       usernameInput: React.createRef(),
       valid: false,
       errorMessage: "",
+      currentUsername: null,
     }
   }
 
@@ -39,6 +41,7 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
     const username = this.state.usernameInput.current?.getValue()
     if (
       !username ||
+      username === this.state.currentUsername ||
       username.length < 4 ||
       username.length > 16 ||
       bannedUsernameCharactersRegex.test(username)
@@ -67,20 +70,38 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
       method: "get",
     }).then(x => x.json())
 
+    // get information about myself
+    const meInformation = await fetch("/api/user/me", {
+      method: "get",
+    }).then(x => x.json())
+
+    // update state with that information
+    this.setState({
+      currentUsername: meInformation.username,
+    })
+
     // make sure we actually get an array back
     if (!Array.isArray(friendsList)) {
       return
     }
 
     // for each friend that we get back, add it to the list
-    friendsList.forEach(friend => {
+    friendsList.forEach(async friend => {
+      if (!friend.id) return
+
+      // get information about user
+      const friendUserInformation = await fetch(
+        `/api/user?id=${friend.id}`
+      ).then(x => x.json())
+
+      // update state with information
       this.setState(
         update(this.state, {
           friends: {
             [friend.id]: {
               $set: {
-                username: "work in progress",
-                since: friend.since,
+                username: friendUserInformation.username,
+                since: new Date(friend.since),
                 isRequest: friend.since === null,
               },
             },
@@ -138,7 +159,7 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
           </div>
         )
       } else {
-        info = <span>{friend.since?.toISOString()}</span>
+        info = <span>since {friend.since?.toLocaleDateString()}</span>
       }
       friendCards.push(
         <li key={iter++} className={styles.friendCard}>
@@ -158,7 +179,7 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
               <Input
                 ref={this.state.usernameInput}
                 color="blue"
-                defaultValue="username"
+                defaultValue={this.state.currentUsername || ""}
                 onKeyPress={e => {
                   const value = e.currentTarget.value
 
