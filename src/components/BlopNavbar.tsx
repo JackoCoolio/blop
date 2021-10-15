@@ -47,26 +47,26 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
         <div className={styles.container}>
           <Link href="/create">
             <a className={classNames(styles.link, styles.navElement)}>
-              <div
-                className={styles.button}
-                id={styles.createGame}
-              >
+              <div className={styles.button} id={styles.createGame}>
                 <CreateGame className={styles.icon} />
               </div>
             </a>
           </Link>
           <Link href="/dashboard">
-            <a className={classNames(styles.link, styles.navElement)} onDrag={() => false}>
-              <div
-                className={styles.button}
-                id={styles.dashboard}
-              >
+            <a
+              className={classNames(styles.link, styles.navElement)}
+              onDrag={() => false}
+            >
+              <div className={styles.button} id={styles.dashboard}>
                 <Dashboard className={styles.icon} />
               </div>
             </a>
           </Link>
           <Link href="/">
-            <a className={classNames(styles.link, styles.navElement)} draggable={false}>
+            <a
+              className={classNames(styles.link, styles.navElement)}
+              draggable={false}
+            >
               <div
                 className={styles.navElement}
                 id={styles.logoButton}
@@ -78,20 +78,14 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
           </Link>
           <Link href={loggedIn ? "/profile" : "/login"}>
             <a className={classNames(styles.link, styles.navElement)}>
-              <div
-                className={styles.button}
-                id={styles.profile}
-              >
+              <div className={styles.button} id={styles.profile}>
                 <Profile className={styles.icon} />
               </div>
             </a>
           </Link>
           <Link href="/settings">
             <a className={classNames(styles.link, styles.navElement)}>
-              <div
-                className={styles.button}
-                id={styles.settings}
-              >
+              <div className={styles.button} id={styles.settings}>
                 <Settings className={styles.icon} />
               </div>
             </a>

@@ -30,7 +30,6 @@ export async function getFriendsList(
   userId: string,
   includeRequests: boolean = true
 ): Promise<Result<UserFacingFriendInterface[], ApiError>> {
-
   // find the user's friends list document
   const friendsListDoc = await FriendsList.findById(userId)
 
@@ -45,14 +44,14 @@ export async function getFriendsList(
   // get friends and incoming requests
   const friendsList = friendsListDoc.friends
 
-  const result: UserFacingFriendInterface[] = [...friendsList]
+  let result: UserFacingFriendInterface[] = [...friendsList]
 
   // if we should include requests, do so
   if (includeRequests) {
     const friendRequests = friendsListDoc.receivedRequests.map(id => {
       return { id, since: null }
     })
-    result.concat(friendRequests)
+    result = result.concat(friendRequests)
   }
 
   // return friends and requests
@@ -84,7 +83,6 @@ export async function sendFriendInvite(
   userId: string,
   targetId: string
 ): Promise<Result<void, ApiError>> {
-
   // make sure the user isn't trying to friend themselves
   if (userId === targetId) {
     return err({
