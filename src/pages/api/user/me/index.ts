@@ -9,47 +9,12 @@ import { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
 import update, { Spec } from "immutability-helper"
 import { Document } from "mongoose"
+import { getUserInformation } from "Lib/user"
 
 const handler = nextConnect()
 
 // user must be authenticated to use this route
 handler.use(authenticationMiddleware)
-
-// the base information about a given user that users should be able to see
-interface UserFacingUserInformation {
-  id: string
-  username: string
-}
-
-/**
- * Returns user-facing information about a given user.
- *
- * @param userId the user's ID
- * @returns a UserFacingUserInformation or an ApiError in a Result
- */
-export async function getUserInformation(
-  userId: string
-): Promise<Result<UserFacingUserInformation, ApiError>> {
-
-  // find the user doc
-  const userDoc = await User.findById(userId)
-
-  // if there isn't a user doc, the userId was invalid
-  if (!userDoc) {
-    return err({
-      message: "Invalid userId!",
-      statusCode: ResponseCode.BAD_REQUEST,
-    })
-  }
-
-  // format the user doc
-  const result: UserFacingUserInformation = {
-    id: userId,
-    username: userDoc.username,
-  }
-
-  return ok(result)
-}
 
 handler.get(
   async (req: NextApiRequest & AuthenticatedRequest, res: NextApiResponse) => {
