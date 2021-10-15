@@ -80,36 +80,4 @@ handler.post(
   }
 )
 
-handler.patch(
-  async (req: NextApiRequest & AuthenticatedRequest, res: NextApiResponse) => {
-    const { username } = JSON.parse(req.body)
-    const { userId } = req
-
-    if (username) {
-      try {
-        const userDoc = await User.findById(userId)
-        if (!userDoc) return console.error("User couldn't be found!")
-
-        userDoc.username = username
-
-        if (userDoc.newUser) {
-          userDoc.newUser = false
-        }
-
-        await userDoc.save()
-
-        return res.status(ResponseCode.NO_CONTENT).end()
-      } catch (e) {
-        return res
-          .status(ResponseCode.BAD_REQUEST)
-          .json({ error: "That username already exists!" })
-      }
-    }
-
-    res.status(ResponseCode.BAD_REQUEST).json({
-      error: "No valid parameters assigned!",
-    })
-  }
-)
-
 export default handler
