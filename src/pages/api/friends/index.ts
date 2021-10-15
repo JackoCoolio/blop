@@ -44,14 +44,14 @@ export async function getFriendsList(
   // get friends and incoming requests
   const friendsList = friendsListDoc.friends
 
-  const result: UserFacingFriendInterface[] = [...friendsList]
+  let result: UserFacingFriendInterface[] = [...friendsList]
 
   // if we should include requests, do so
   if (includeRequests) {
     const friendRequests = friendsListDoc.receivedRequests.map(id => {
       return { id, since: null }
     })
-    result.concat(friendRequests)
+    result = result.concat(friendRequests)
   }
 
   // return friends and requests
