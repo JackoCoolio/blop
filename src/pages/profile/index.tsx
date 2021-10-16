@@ -7,6 +7,8 @@ import { Input } from "Components/Input"
 import { ResponseCode } from "Lib/util"
 import CheckIcon from "../../../public/check.svg"
 import XIcon from "../../../public/ttt-x.svg"
+import { Search, SearchResult } from "Components/Search"
+import User from "Models/User"
 
 const bannedUsernameCharactersRegex = /[^A-Za-z0-9\-_]/
 
@@ -214,6 +216,52 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
           </div>
         </div>
         <div id={styles.friendsPane}>
+          <Search
+            color="yellow"
+            className={styles.searchBar}
+            search={async query => {
+              // const results = [
+              //   {
+              //     displayText: "abc",
+              //     onSelect: () => {},
+              //   },
+              //   {
+              //     displayText: "123",
+              //     onSelect: () => {},
+              //   },
+              //   {
+              //     displayText: "wow!",
+              //     onSelect: () => {},
+              //   },
+              // ]
+
+              const searchRequestResult: any = await fetch("/api/search", {
+                method: "post",
+                body: JSON.stringify({
+                  query,
+                  limit: 10,
+                }),
+              }).then(x => x.json())
+
+              const formattedResults: SearchResult[] =
+                searchRequestResult.matches.map((result: any) => {
+                  return {
+                    displayText: result.username,
+                    onSelect: async () => {
+                      await fetch("/api/friends", {
+                        method: "post",
+                        body: JSON.stringify({
+                          targetId: result.id,
+                        }),
+                      })
+                    },
+                  }
+                })
+
+              return formattedResults
+            }}
+            searchInterval={1000}
+          />
           <ul id={styles.friendsContainer}>{friendCards}</ul>
         </div>
       </div>

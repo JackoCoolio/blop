@@ -1,0 +1,47 @@
+.main {
+  position: relative;
+  display: grid;
+  grid-template-rows: 2;
+}
+
+.searchInput {
+  position: relative;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.searchInput:focus + .resultListHead {
+  opacity: 100%;
+}
+
+.resultListHead {
+  opacity: 0%;
+  position: relative;
+  width: 100%;
+  height: 0;
+  transition: opacity 0.2s ease;
+}
+
+.resultList {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 0 0;
+  margin: 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.resultList .result {
+  margin-top: 0;
+  margin-bottom: 0;
+  height: 2rem;
+  width: 100%;
+  background-color: var(--blop-gray);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
