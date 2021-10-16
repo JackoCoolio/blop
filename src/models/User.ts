@@ -1,5 +1,8 @@
 import mongoose from "mongoose"
 import { nanoid } from "nanoid"
+import mongooseFuzzySearching, {
+  MongooseFuzzyModel,
+} from "mongoose-fuzzy-searching"
 
 // funny name for this one :)
 export interface UserInterface {
@@ -46,5 +49,12 @@ const UserSchema = new mongoose.Schema<
   },
 })
 
-export default (mongoose.models.User as mongoose.Model<UserInterface>) ||
-  mongoose.model<UserInterface>("User", UserSchema)
+// allow fuzzy searching for usernames
+UserSchema.plugin(mongooseFuzzySearching, { fields: ["username"] })
+
+export default (mongoose.models
+  .User as mongoose.Model<UserInterface> as MongooseFuzzyModel<UserInterface>) ||
+  (mongoose.model<UserInterface>(
+    "User",
+    UserSchema
+  ) as MongooseFuzzyModel<UserInterface>)

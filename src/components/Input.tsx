@@ -2,7 +2,7 @@ import styles from "Styles/Input.module.scss"
 import React, { Component } from "react"
 import classNames from "classnames"
 
-interface InputProps {
+export interface InputProps {
   onKeyPress?: React.KeyboardEventHandler<HTMLInputElement>
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
