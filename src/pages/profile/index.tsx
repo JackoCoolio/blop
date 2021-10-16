@@ -8,7 +8,6 @@ import { ResponseCode } from "Lib/util"
 import CheckIcon from "../../../public/check.svg"
 import XIcon from "../../../public/ttt-x.svg"
 import { Search, SearchResult } from "Components/Search"
-import User from "Models/User"
 
 const bannedUsernameCharactersRegex = /[^A-Za-z0-9\-_]/
 
@@ -219,6 +218,7 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
           <Search
             color="yellow"
             className={styles.searchBar}
+            promptText="Search for a user..."
             search={async query => {
               // const results = [
               //   {
@@ -239,7 +239,8 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
                 method: "post",
                 body: JSON.stringify({
                   query,
-                  limit: 10,
+                  limit: 5,
+                  excludeMe: true,
                 }),
               }).then(x => x.json())
 
@@ -248,6 +249,7 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
                   return {
                     displayText: result.username,
                     onSelect: async () => {
+                      console.log(result.username)
                       await fetch("/api/friends", {
                         method: "post",
                         body: JSON.stringify({
