@@ -19,12 +19,14 @@ interface SearchProps {
   id?: string
   disabled?: boolean
   className?: string
+  promptText?: string
 }
 
 interface SearchState {
   results: SearchResult[]
   query: string
   lastQuery: string
+  showResults: boolean
 }
 
 export class Search extends Component<SearchProps, SearchState> {
@@ -51,6 +53,7 @@ export class Search extends Component<SearchProps, SearchState> {
       results: [],
       query: "",
       lastQuery: "",
+      showResults: false,
     }
 
     this.generateSearchResultList = this.generateSearchResultList.bind(this)
@@ -61,7 +64,11 @@ export class Search extends Component<SearchProps, SearchState> {
 
     for (let i = 0; i < this.state.results.length; i++) {
       list.push(
-        <li key={i} className={styles.result}>
+        <li
+          key={i}
+          className={styles.result}
+          onMouseDown={this.state.results[i].onSelect}
+        >
           <span className={styles.resultText}>
             {this.state.results[i].displayText}
           </span>
@@ -80,13 +87,37 @@ export class Search extends Component<SearchProps, SearchState> {
         <Input
           color={this.props.color}
           className={styles.searchInput}
+          promptText={this.props.promptText}
+          onFocus={e =>
+            this.setState({
+              showResults: true,
+            })
+          }
+          onBlur={e =>
+            this.setState({
+              showResults: false,
+            })
+          }
           onKeyUp={e => {
+            if (e.currentTarget.value === "") {
+              this.setState({
+                results: [],
+              })
+            }
+
             this.setState({
               query: e.currentTarget.value,
             })
           }}
+          textAlign="center"
         />
-        <div className={styles.resultListHead}>
+        <div
+          className={styles.resultListHead}
+          style={{
+            opacity: this.state.showResults ? "100%" : "0%",
+            pointerEvents: this.state.showResults ? "initial" : "none",
+          }}
+        >
           <ul className={styles.resultList}>{resultList}</ul>
         </div>
       </div>

@@ -54,18 +54,29 @@ export async function getUserInformation(
 }
 
 /**
- * Searches for users with the given query string.
+ * Searches for users with the given query string and excludes the given user if `searcherId` is provided.
  * @param query the query string
  * @param limit the maximum number of users to return
+ * @param searcherId the ID of the searcher
  * @returns a list of User documents
  */
 export async function searchForUsers(
   query: string,
-  limit: number
+  limit: number,
+  searcherId?: string
 ): Promise<
   Result<(Document<any, any, UserInterface> & UserInterface)[], void>
 > {
-  const searchResultDocuments = await User.fuzzySearch(query).limit(limit)
+  let searchResultDocumentsQuery = User.fuzzySearch(query)
+
+  // don't show matches with the given userId
+  if (searcherId) {
+    searchResultDocumentsQuery = searchResultDocumentsQuery
+      .where("_id")
+      .ne(searcherId)
+  }
+
+  const searchResultDocuments = await searchResultDocumentsQuery.limit(limit)
 
   return ok(searchResultDocuments)
 }

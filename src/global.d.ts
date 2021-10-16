@@ -35,7 +35,7 @@ declare interface ApiError {
 }
 
 declare module "mongoose-fuzzy-searching" {
-  import { Document, DocumentQuery, Model, Schema } from "mongoose"
+  import { Document, Query, Model, Schema } from "mongoose"
 
   export interface MongooseFuzzyOptions<T> {
     fields: (T extends Object ? keyof T : string)[]
@@ -46,7 +46,12 @@ declare module "mongoose-fuzzy-searching" {
     fuzzySearch(
       search: String,
       callBack?: (err: any, data: Model<T, QueryHelpers>[]) => void
-    ): DocumentQuery<T[], T, QueryHelpers>
+    ): Query<
+      (Document<any, any, T> & T)[],
+      Document<any, any, T> & T,
+      QueryHelpers,
+      T
+    >
   }
 
   function fuzzyPlugin<T>(
