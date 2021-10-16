@@ -70,7 +70,7 @@ class ProfileSetupPage extends Component<
     if (valid) {
       const username = this.state.usernameInput.current!.value
 
-      const response = await fetch("/api/user/", {
+      const response = await fetch("/api/user/me", {
         method: "PATCH",
         body: JSON.stringify({
           username,

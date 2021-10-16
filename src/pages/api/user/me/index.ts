@@ -70,6 +70,9 @@ export async function updateUser(
   // change the local copy of the doc
   userDoc = update(userDoc, change)
 
+  // mark user has not new since they've chosen a username
+  userDoc.newUser = false
+
   // save it to the database
   // note: depending on the definition of User, this might
   //       not be needed, but just in case, we'll keep it
