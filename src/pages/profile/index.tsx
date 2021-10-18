@@ -8,6 +8,8 @@ import { ResponseCode } from "Lib/util"
 import CheckIcon from "../../../public/check.svg"
 import XIcon from "../../../public/ttt-x.svg"
 import { Search, SearchResult } from "Components/Search"
+import { parseCookies } from "nookies"
+import { isSessionLoggedIn } from "Lib/session"
 
 const bannedUsernameCharactersRegex = /[^A-Za-z0-9\-_]/
 
@@ -272,3 +274,21 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
 }
 
 export default ProfilePage
+
+export async function getServerSideProps({ req, res, router }: any) {
+  const { session } = parseCookies({ req })
+  const isLoggedIn = await isSessionLoggedIn(session)
+
+  if (!isLoggedIn) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    }
+  } else {
+    return {
+      props: {},
+    }
+  }
+}

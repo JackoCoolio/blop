@@ -8,6 +8,7 @@ import User from "Models/User"
 import { createNewSession } from "Lib/session"
 import { createUser } from "Lib/userSetup"
 import { ResponseCode } from "Lib/util"
+import PartialUser from "Models/PartialUser"
 
 const handler = nextConnect()
 
@@ -52,7 +53,10 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { accessToken, refreshToken } = await fetchToken(body)
 
-  var userDoc = await User.findOne({ refreshToken })
+  var userDoc =
+    (await User.findOne({ refreshToken })) ||
+    (await PartialUser.findOne({ refreshToken }))
+
   if (!userDoc) {
     const userDocResult = await createUser(refreshToken)
     if (userDocResult.isOk()) {
@@ -72,7 +76,7 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
     path: "/",
   })
 
-  if (userDoc.newUser) {
+  if (!Object.keys(userDoc).includes("username")) {
     // set up new user
     res.redirect("/profile/setup")
 

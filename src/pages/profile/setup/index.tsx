@@ -2,12 +2,12 @@ import styles from "Styles/ProfileSetupPage.module.scss"
 import React, { Component } from "react"
 import { Button } from "Components/Button"
 import { parseCookies } from "nookies"
-import User from "Models/User"
 import { getSessionInformation } from "src/pages/api/session"
 import { isSuccessfulResponse } from "Lib/response"
 import fetch from "node-fetch"
 import { ResponseCode } from "Lib/util"
 import { Router, withRouter } from "next/router"
+import PartialUser from "Models/PartialUser"
 
 const bannedUsernameCharactersRegex = /[^A-Za-z0-9\-_]/
 
@@ -162,10 +162,9 @@ export async function getServerSideProps({ req }: any) {
   } else {
     // check if the profile is still being set up
     // we know at this point that the user exists
-    const userDoc = await User.findById(sessionInfo.body.userId)
+    const partialUserDoc = await PartialUser.findById(sessionInfo.body.userId)
 
-    // some odd looking TS syntax
-    if (!userDoc!.newUser) {
+    if (!partialUserDoc) {
       return {
         redirect: {
           permanent: false,

@@ -1,5 +1,4 @@
 import mongoose from "mongoose"
-import { nanoid } from "nanoid"
 import mongooseFuzzySearching, {
   MongooseFuzzyModel,
 } from "mongoose-fuzzy-searching"
@@ -8,7 +7,6 @@ import mongooseFuzzySearching, {
 export interface UserInterface {
   _id: string
   username: string
-  newUser: boolean
   discordId: string
   refreshToken: string
   games: string[]
@@ -19,35 +17,34 @@ const UserSchema = new mongoose.Schema<
   UserInterface,
   mongoose.Model<UserInterface>,
   UserInterface
->({
-  _id: {
-    type: String,
-    default: () => nanoid(),
+>(
+  {
+    _id: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      unique: true,
+    },
+    discordId: {
+      type: String,
+    },
+    refreshToken: {
+      type: String,
+      required: true,
+    },
+    games: {
+      type: [String],
+      default: [],
+    },
+    pendingInvites: {
+      type: [String],
+      default: [],
+    },
   },
-  username: {
-    type: String,
-    unique: true,
-  },
-  newUser: {
-    type: Boolean,
-    default: true,
-  },
-  discordId: {
-    type: String,
-  },
-  refreshToken: {
-    type: String,
-    required: true,
-  },
-  games: {
-    type: [String],
-    default: [],
-  },
-  pendingInvites: {
-    type: [String],
-    default: [],
-  },
-})
+  { _id: false }
+)
 
 // allow fuzzy searching for usernames
 UserSchema.plugin(mongooseFuzzySearching, { fields: ["username"] })
