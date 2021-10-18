@@ -5,6 +5,7 @@ import { isVerifiedEnv } from "Lib/env"
 import User from "Models/User"
 import Session from "Models/Session"
 import { ResponseCode } from "Lib/util"
+import PartialUser from "Models/PartialUser"
 
 const handler = nextConnect()
 
@@ -47,7 +48,9 @@ export async function getSessionInformation(
     }
   }
 
-  const userDoc = await User.findById(sessionDoc.userId)
+  const userDoc =
+    (await User.findById(sessionDoc.userId)) ||
+    (await PartialUser.findById(sessionDoc.userId))
 
   const loggedIn = !!userDoc
 

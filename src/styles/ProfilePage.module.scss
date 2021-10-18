@@ -1,0 +1,109 @@
+#main {
+  display: flex;
+  flex-direction: row;
+}
+
+#profilePane {
+  min-width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#profileContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5rem;
+  background-color: var(--blop-gray);
+  padding: 50px;
+}
+
+.profileField {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.profileField > h2 {
+  padding-right: 1em;
+}
+
+#profileHeading {
+  margin: 0;
+}
+
+#friendsPane {
+  min-width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#friendsContainer {
+  list-style-type: none;
+}
+
+.friendCard {
+  width: 75%;
+  border-radius: 5rem;
+  background-color: var(--blop-gray);
+  padding: 0.5rem 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.friendName {
+  font-size: 1.5rem;
+  margin-right: 1em;
+}
+
+.friendSince {
+  color: var(--blop-white);
+}
+
+#accept {
+  --button-bg-color: var(--blop-green);
+}
+
+#decline {
+  --button-bg-color: var(--blop-red);
+}
+
+.friendButton {
+  border-radius: 50%;
+  border-color: var(--button-bg-color);
+  border-style: solid;
+  border-width: 3px;
+  fill: white;
+  transition: background-color 0.15s ease;
+  font-size: 0;
+  margin: 0 1rem;
+  cursor: pointer;
+}
+
+.friendButton:hover {
+  background-color: var(--button-bg-color);
+}
+
+.friendOptions {
+  display: flex;
+  justify-content: space-between;
+  margin-right: -1rem;
+}
+
+.icon {
+  position: relative;
+  height: 1rem;
+  margin: 1rem;
+  width: fit-content;
+}
+
+.searchBar {
+  display: absolute;
+  width: 80%;
+}

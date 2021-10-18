@@ -28,3 +28,36 @@ declare interface SuccessfulPrivateApiResponse<ApiResponseType> {
 declare type PrivateApiResponse<ApiResponseType> =
   | SuccessfulPrivateApiResponse<ApiResponseType>
   | FailedPrivateApiResponse
+
+declare interface ApiError {
+  message: string
+  statusCode: number
+}
+
+declare module "mongoose-fuzzy-searching" {
+  import { Document, Query, Model, Schema } from "mongoose"
+
+  export interface MongooseFuzzyOptions<T> {
+    fields: (T extends Object ? keyof T : string)[]
+  }
+
+  export interface MongooseFuzzyModel<T, QueryHelpers = {}>
+    extends Model<T, QueryHelpers> {
+    fuzzySearch(
+      search: String,
+      callBack?: (err: any, data: Model<T, QueryHelpers>[]) => void
+    ): Query<
+      (Document<any, any, T> & T)[],
+      Document<any, any, T> & T,
+      QueryHelpers,
+      T
+    >
+  }
+
+  function fuzzyPlugin<T>(
+    schema: Schema<T>,
+    options: MongooseFuzzyOptions<T>
+  ): void
+
+  export default fuzzyPlugin
+}

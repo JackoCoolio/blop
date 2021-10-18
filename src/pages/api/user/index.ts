@@ -6,10 +6,33 @@ import {
   AuthenticatedRequest,
   authenticationMiddleware,
 } from "Middleware/loginChecker"
+import { getUserInformation } from "Lib/user"
 
 const handler = nextConnect()
 
 handler.use(authenticationMiddleware)
+
+handler.get(
+  async (req: NextApiRequest & AuthenticatedRequest, res: NextApiResponse) => {
+    // check if the id is valid
+    if (!req.query.id || typeof req.query.id !== "string") {
+      return res
+        .status(ResponseCode.BAD_REQUEST)
+        .json({ message: "id must be a string!" })
+    }
+
+    // get the user information
+    const informationResult = await getUserInformation(req.query.id)
+
+    if (informationResult.isOk()) {
+      return res.status(ResponseCode.OK).json(informationResult.value)
+    } else {
+      return res
+        .status(informationResult.error.statusCode)
+        .json({ message: informationResult.error.message })
+    }
+  }
+)
 
 const allowedOptions = ["_id", "username"]
 interface UserExistQueryOptions {
@@ -77,38 +100,6 @@ handler.post(
     const response = await getMatchingUsers(JSON.parse(req.body))
 
     return res.status(response.statusCode).json(response.body)
-  }
-)
-
-handler.patch(
-  async (req: NextApiRequest & AuthenticatedRequest, res: NextApiResponse) => {
-    const { username } = JSON.parse(req.body)
-    const { userId } = req
-
-    if (username) {
-      try {
-        const userDoc = await User.findById(userId)
-        if (!userDoc) return console.error("User couldn't be found!")
-
-        userDoc.username = username
-
-        if (userDoc.newUser) {
-          userDoc.newUser = false
-        }
-
-        await userDoc.save()
-
-        return res.status(ResponseCode.NO_CONTENT).end()
-      } catch (e) {
-        return res
-          .status(ResponseCode.BAD_REQUEST)
-          .json({ error: "That username already exists!" })
-      }
-    }
-
-    res.status(ResponseCode.BAD_REQUEST).json({
-      error: "No valid parameters assigned!",
-    })
   }
 )
 

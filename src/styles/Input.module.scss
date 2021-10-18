@@ -1,0 +1,63 @@
+.blue {
+  --input-color: var(--blop-blue);
+}
+
+.red {
+  --input-color: var(--blop-red);
+}
+
+.green {
+  --input-color: var(--blop-green);
+}
+
+.yellow {
+  --input-color: var(--blop-yellow);
+}
+
+.inputContainer {
+  position: relative;
+  text-align: left;
+  font-size: 1.5rem;
+}
+
+.promptText {
+  position: absolute;
+  height: fit-content;
+  width: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+  vertical-align: middle;
+  color: var(--blop-light-gray);
+  font-style: italic;
+  user-select: none;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.input {
+  position: relative;
+  font-size: 1.5rem;
+  padding: 0 0;
+  width: 15.5em;
+  height: 3em;
+  background-color: inherit;
+  color: var(--blop-white);
+  border-style: none;
+  border-bottom: solid 3px var(--blop-light-gray);
+  margin-bottom: -3px;
+
+  transition: border-color 0.2s ease;
+  cursor: text;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--input-color);
+}
+
+.promptText {
+  transition: filter 0.2s ease;
+}

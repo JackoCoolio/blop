@@ -2,6 +2,7 @@ import styles from "Styles/BlopNavbar.module.scss"
 import Link from "next/link"
 import { Component } from "react"
 import fetch from "node-fetch"
+import classNames from "classnames"
 import Logo from "../../public/blop.svg"
 import Dashboard from "../../public/dashboard.svg"
 import Profile from "../../public/profile.svg"
@@ -45,27 +46,27 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
       <nav className={styles.main}>
         <div className={styles.container}>
           <Link href="/create">
-            <a className={styles.link}>
-              <div
-                className={`${styles.button} ${styles.navElement}`}
-                id={styles.createGame}
-              >
+            <a className={classNames(styles.link, styles.navElement)}>
+              <div className={styles.button} id={styles.createGame}>
                 <CreateGame className={styles.icon} />
               </div>
             </a>
           </Link>
           <Link href="/dashboard">
-            <a className={styles.link} onDrag={() => false}>
-              <div
-                className={`${styles.button} ${styles.navElement}`}
-                id={styles.dashboard}
-              >
+            <a
+              className={classNames(styles.link, styles.navElement)}
+              onDrag={() => false}
+            >
+              <div className={styles.button} id={styles.dashboard}>
                 <Dashboard className={styles.icon} />
               </div>
             </a>
           </Link>
           <Link href="/">
-            <a className={styles.link} draggable={false}>
+            <a
+              className={classNames(styles.link, styles.navElement)}
+              draggable={false}
+            >
               <div
                 className={styles.navElement}
                 id={styles.logoButton}
@@ -76,21 +77,15 @@ export class BlopNavbar extends Component<unknown, NavbarState> {
             </a>
           </Link>
           <Link href={loggedIn ? "/profile" : "/login"}>
-            <a className={styles.link}>
-              <div
-                className={`${styles.button} ${styles.navElement}`}
-                id={styles.profile}
-              >
+            <a className={classNames(styles.link, styles.navElement)}>
+              <div className={styles.button} id={styles.profile}>
                 <Profile className={styles.icon} />
               </div>
             </a>
           </Link>
           <Link href="/settings">
-            <a className={styles.link}>
-              <div
-                className={`${styles.button} ${styles.navElement}`}
-                id={styles.settings}
-              >
+            <a className={classNames(styles.link, styles.navElement)}>
+              <div className={styles.button} id={styles.settings}>
                 <Settings className={styles.icon} />
               </div>
             </a>

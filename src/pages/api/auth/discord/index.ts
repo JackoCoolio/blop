@@ -6,6 +6,9 @@ import { getUser } from "Lib/discord"
 import { isVerifiedEnv } from "Lib/env"
 import User from "Models/User"
 import { createNewSession } from "Lib/session"
+import { createUser } from "Lib/userSetup"
+import { ResponseCode } from "Lib/util"
+import PartialUser from "Models/PartialUser"
 
 const handler = nextConnect()
 
@@ -50,24 +53,30 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { accessToken, refreshToken } = await fetchToken(body)
 
-  var userDoc = await User.findOne({ refreshToken })
-  if (userDoc) {
-    var userId = userDoc._id
-  } else {
-    userDoc = await User.create({
-      refreshToken,
-    })
-    var userId = userDoc._id
+  var userDoc =
+    (await User.findOne({ refreshToken })) ||
+    (await PartialUser.findOne({ refreshToken }))
+
+  if (!userDoc) {
+    const userDocResult = await createUser(refreshToken)
+    if (userDocResult.isOk()) {
+      userDoc = userDocResult.value
+    } else {
+      console.error(userDocResult)
+      return res
+        .status(ResponseCode.INTERNAL_SERVER_ERROR)
+        .json({ error: userDocResult.error.message })
+    }
   }
 
-  const sessionId = await createNewSession(userId)
+  const sessionId = await createNewSession(userDoc._id)
   setCookie({ res }, "session", sessionId, {
     httpOnly: true,
     secure: false,
     path: "/",
   })
 
-  if (userDoc.newUser) {
+  if (!Object.keys(userDoc).includes("username")) {
     // set up new user
     res.redirect("/profile/setup")
 
