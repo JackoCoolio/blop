@@ -8,8 +8,9 @@ import { err, ok, Result } from "neverthrow"
 import { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
 import update, { Spec } from "immutability-helper"
-import { Document } from "mongoose"
 import { getUserInformation } from "Lib/user"
+import PartialUser from "Models/PartialUser"
+import { finalizeUser } from "Lib/userSetup"
 
 const handler = nextConnect()
 
@@ -30,10 +31,7 @@ handler.get(
   }
 )
 
-type UpdateUserSpec = Spec<
-  Document<any, any, UserInterface> & UserInterface,
-  never
->
+type UpdateUserSpec = Spec<UserInterface, never>
 /**
  * Update the user with ID userId with the given changes.
  * @param userId the user's ID
@@ -53,32 +51,37 @@ export async function updateUser(
 
   // if we couldn't find the user, the ID was invalid
   if (!userDoc) {
-    return err({
-      message: "Invalid userId!",
-      statusCode: ResponseCode.BAD_REQUEST,
-    })
+    let partialUserDoc = await PartialUser.findById(userId)
+
+    if (!partialUserDoc)
+      return err({
+        message: "Invalid userId!",
+        statusCode: ResponseCode.BAD_REQUEST,
+      })
+
+    // ensure that the new username is specified
+    if (!change.username) {
+      return err({
+        message: "New users must set their usernames!",
+        statusCode: ResponseCode.BAD_REQUEST,
+      })
+    }
+
+    // finalize the user with the given changes
+    await finalizeUser(partialUserDoc._id, change)
+
+    return ok(undefined)
+  } else {
+    // change the local copy of the doc
+    userDoc = update(userDoc, change)
+
+    // save it to the database
+    // note: depending on the definition of User, this might
+    //       not be needed, but just in case, we'll keep it
+    await userDoc.save()
+
+    return ok(undefined)
   }
-
-  // enforce new user rules
-  if (userDoc.newUser && !change.username) {
-    return err({
-      message: "New users must set their usernames!",
-      statusCode: ResponseCode.BAD_REQUEST,
-    })
-  }
-
-  // change the local copy of the doc
-  userDoc = update(userDoc, change)
-
-  // mark user has not new since they've chosen a username
-  userDoc.newUser = false
-
-  // save it to the database
-  // note: depending on the definition of User, this might
-  //       not be needed, but just in case, we'll keep it
-  await userDoc.save()
-
-  return ok(undefined)
 }
 
 handler.patch(
