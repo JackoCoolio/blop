@@ -54,39 +54,54 @@ export async function getUserInformation(
   return ok(result)
 }
 
+interface SearchScope {
+  group: "all" | "friends"
+  exclude: {
+    me: boolean
+    friends: boolean
+    users: string[]
+  }
+}
+
 /**
  * Searches for users with the given query string and excludes the given user if `searcherId` is provided.
  * @param query the query string
  * @param limit the maximum number of users to return
- * @param searcherId the ID of the searcher
+ * @param scope a SearchScope object that defines the search scope
+ * @param userId the ID of the searcher
  * @returns a list of User documents
  */
 export async function searchForUsers(
   query: string,
   limit: number,
-  scope: "all" | "friends",
-  searcherId?: string
+  scope: SearchScope,
+  userId: string
 ): Promise<
   Result<(Document<any, any, UserInterface> & UserInterface)[], Error>
 > {
+  // get friends list if it will be needed
+  if (scope.group === "friends" || scope.exclude.friends) {
+    const friendsList = await FriendsList.findById(userId)
+    if (!friendsList) {
+      return err(new Error("Invalid searcherId!"))
+    }
+    var friendIds = friendsList.friends.map(friend => friend.id)
+  }
+
   let searchResultDocumentsQuery
-  if (scope === "all") {
+  if (scope.group === "all") {
     searchResultDocumentsQuery = User.fuzzySearch(query)
-  } else if (scope === "friends") {
-    if (!searcherId) {
+  } else if (scope.group === "friends") {
+    if (!userId) {
       return err(
         new Error("searcherId must be defined in order to search friends!")
       )
     }
 
-    const friendsList = await FriendsList.findById(searcherId)
-    if (!friendsList) {
-      return err(new Error("Invalid searcherId!"))
-    }
-
     searchResultDocumentsQuery = User.find({
       _id: {
-        $in: friendsList.friends.map(friend => friend.id),
+        $in: friendIds!,
+        $nin: scope.exclude.users,
       },
       // mongoose-fuzzy-search's .fuzzySearch(query) method doesn't work here
       // so we use this instead
@@ -95,14 +110,23 @@ export async function searchForUsers(
       },
     })
   } else {
-    return err(new Error("Invalid search scope! Must be  'all' or 'friends'"))
+    return err(
+      new Error("Invalid search scope group! Must be  'all' or 'friends'")
+    )
   }
 
   // don't show matches with the given userId
-  if (searcherId) {
+  if (scope.exclude.me) {
     searchResultDocumentsQuery = searchResultDocumentsQuery
       .where("_id")
-      .ne(searcherId)
+      .ne(userId)
+  }
+
+  // don't show friends
+  if (scope.exclude.friends) {
+    searchResultDocumentsQuery = searchResultDocumentsQuery
+      .where("_id")
+      .nin(friendIds!)
   }
 
   const searchResultDocuments = await searchResultDocumentsQuery.limit(limit)

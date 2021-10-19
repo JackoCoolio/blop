@@ -149,8 +149,14 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
                   body: JSON.stringify({
                     query,
                     limit: 5,
-                    excludeMe: true,
-                    scope: "friends",
+                    scope: {
+                      group: "friends",
+                      exclude: {
+                        me: true,
+                        friends: false,
+                        users: this.state.invitees.map(x => x.id),
+                      },
+                    },
                   }),
                 }).then(x => x.json())
 
