@@ -78,11 +78,11 @@ class ProfileSetupPage extends Component<
       })
 
       if (response.status !== ResponseCode.NO_CONTENT) {
-        const { error } = await response.json()
+        const { message } = await response.json()
 
-        if (error) {
+        if (message) {
           this.setState({
-            errorMessage: error,
+            errorMessage: message,
           })
         }
       } else {

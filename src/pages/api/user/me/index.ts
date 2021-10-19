@@ -67,10 +67,16 @@ export async function updateUser(
       })
     }
 
-    // finalize the user with the given changes
-    await finalizeUser(partialUserDoc._id, change)
-
-    return ok(undefined)
+    // finalize the user with the given changes or pass along the error
+    const finalizeUserResult = await finalizeUser(partialUserDoc._id, change)
+    if (finalizeUserResult.isOk()) {
+      return ok(undefined)
+    } else {
+      return err({
+        message: finalizeUserResult.error.message,
+        statusCode: ResponseCode.INTERNAL_SERVER_ERROR,
+      })
+    }
   } else {
     // change the local copy of the doc
     userDoc = update(userDoc, change)

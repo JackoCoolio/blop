@@ -17,7 +17,6 @@ const FriendSchema = new mongoose.Schema<
   {
     id: {
       type: String,
-      unique: true,
     },
     since: Date,
   },
