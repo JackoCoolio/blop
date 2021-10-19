@@ -27,6 +27,8 @@ interface SearchState {
   query: string
   lastQuery: string
   showResults: boolean
+  shouldSearch: boolean
+  selectedResult: number | null
 }
 
 export class Search extends Component<SearchProps, SearchState> {
@@ -37,15 +39,17 @@ export class Search extends Component<SearchProps, SearchState> {
 
     this.timer = setInterval(async () => {
       const query = this.state.query
-      if (query === this.state.lastQuery || query === "") return
+      if (
+        !this.state.shouldSearch ||
+        query === this.state.lastQuery ||
+        query === ""
+      )
+        return
 
-      const results = await this.props.search(query)
-      console.log({
-        results,
-      })
       this.setState({
-        results,
         lastQuery: query,
+        shouldSearch: false,
+        results: await this.props.search(query),
       })
     }, this.props.searchInterval)
 
@@ -54,6 +58,8 @@ export class Search extends Component<SearchProps, SearchState> {
       query: "",
       lastQuery: "",
       showResults: false,
+      shouldSearch: false,
+      selectedResult: null,
     }
 
     this.generateSearchResultList = this.generateSearchResultList.bind(this)
@@ -66,7 +72,9 @@ export class Search extends Component<SearchProps, SearchState> {
       list.push(
         <li
           key={i}
-          className={styles.result}
+          className={classNames(styles.result, {
+            [styles.selected]: this.state.selectedResult === i,
+          })}
           onMouseDown={this.state.results[i].onSelect}
         >
           <span className={styles.resultText}>
@@ -101,16 +109,64 @@ export class Search extends Component<SearchProps, SearchState> {
               showResults: false,
             })
           }
-          onKeyUp={e => {
+          onChange={e => {
             if (e.currentTarget.value === "") {
               this.setState({
                 results: [],
+                selectedResult: null,
               })
             }
 
             this.setState({
               query: e.currentTarget.value,
+              shouldSearch: true,
             })
+          }}
+          onKeyDown={e => {
+            if (this.state.results.length === 0) return
+            if (e.key === "ArrowUp") {
+              const resultIndex =
+                ((this.state.selectedResult || this.state.results.length) - 1) %
+                this.state.results.length
+              const result = this.state.results[resultIndex]
+              this.setState({
+                // some cool math
+                selectedResult: resultIndex,
+                shouldSearch: false,
+              })
+
+              e.currentTarget.value = result.displayText
+              e.preventDefault()
+            } else if (e.key === "ArrowDown") {
+              const resultIndex =
+                ((this.state.selectedResult || 0) + 1) %
+                this.state.results.length
+              const result = this.state.results[resultIndex]
+              this.setState({
+                // some cool math
+                selectedResult: resultIndex,
+                shouldSearch: false,
+              })
+
+              e.currentTarget.value = result.displayText
+              e.preventDefault()
+            } else if (e.key === "Enter") {
+              if (this.state.selectedResult !== null) {
+                const result = this.state.results[this.state.selectedResult]
+
+                if (result.onSelect) result.onSelect()
+                this.setState({
+                  query: "",
+                  shouldSearch: false,
+                  showResults: false,
+                  results: [],
+                  selectedResult: null,
+                })
+
+                e.currentTarget.value = ""
+                e.preventDefault()
+              }
+            }
           }}
           textAlign="center"
         />
