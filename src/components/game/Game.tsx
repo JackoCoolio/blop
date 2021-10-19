@@ -1,4 +1,4 @@
-import { GameInterface } from "Lib/game"
+import { GameInterface } from "Lib/client/game"
 import { Component } from "react"
 
 export interface GameProps {

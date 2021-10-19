@@ -21,6 +21,7 @@ export interface InputProps {
 interface InputState {
   inputElement: React.RefObject<HTMLInputElement>
   showPrompt: boolean
+  displayValue: string
 }
 
 /**
@@ -33,6 +34,7 @@ export class Input extends Component<InputProps, InputState> {
     this.state = {
       inputElement: React.createRef(),
       showPrompt: !this.props.defaultValue,
+      displayValue: this.props.defaultValue || "",
     }
 
     this.getValue = this.getValue.bind(this)

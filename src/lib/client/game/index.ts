@@ -1,4 +1,7 @@
-import { TicTacToeGameInterface, TicTacToeState } from "Lib/game/tictactoe"
+import {
+  TicTacToeGameInterface,
+  TicTacToeState,
+} from "Lib/client/game/tictactoe"
 
 export type GameType = "tictactoe"
 export function isGameType(x: any): x is GameType {

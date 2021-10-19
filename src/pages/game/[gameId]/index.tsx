@@ -1,7 +1,7 @@
 import { Component } from "react"
 import AppContainer from "Components/AppContainer"
 import fetch from "node-fetch"
-import { GameInterface } from "Lib/game"
+import { GameInterface } from "Lib/client/game"
 import { TicTacToe } from "Components/game/TicTacToe"
 
 interface GameHandlerComponentProps {

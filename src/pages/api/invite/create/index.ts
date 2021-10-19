@@ -1,10 +1,10 @@
 import nextConnect from "next-connect"
 import { NextApiRequest, NextApiResponse } from "next"
 import { parseCookies } from "nookies"
-import { createNewInvite } from "Lib/invite"
-import { ResponseCode } from "Lib/util"
+import { createNewInvite } from "Lib/server/invite"
+import { ResponseCode } from "Lib/server/util"
 import { getSessionInformation } from "../../session"
-import { isSuccessfulResponse, respond } from "Lib/response"
+import { isSuccessfulResponse, respond } from "Lib/server/response"
 
 interface InviteCreateBody {
   invitees: string[]

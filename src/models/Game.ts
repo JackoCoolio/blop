@@ -1,7 +1,7 @@
 import mongoose, { EnforceDocument } from "mongoose"
 import { nanoid } from "nanoid"
-import { GameInterface } from "Lib/game"
-import { TicTacToeGameInterface } from "Lib/game/tictactoe"
+import { GameInterface } from "Lib/client/game"
+import { TicTacToeGameInterface } from "Lib/client/game/tictactoe"
 
 const GameSchema = new mongoose.Schema<
   GameInterface,

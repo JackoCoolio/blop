@@ -1,12 +1,12 @@
 import nextConnect from "next-connect"
 import { NextApiRequest, NextApiResponse } from "next"
 import User from "Models/User"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import {
   AuthenticatedRequest,
   authenticationMiddleware,
 } from "Middleware/loginChecker"
-import { getUserInformation } from "Lib/user"
+import { getUserInformation } from "Lib/server/user"
 
 const handler = nextConnect()
 

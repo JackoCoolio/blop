@@ -3,9 +3,9 @@ import React, { Component } from "react"
 import { Button } from "Components/Button"
 import { parseCookies } from "nookies"
 import { getSessionInformation } from "src/pages/api/session"
-import { isSuccessfulResponse } from "Lib/response"
+import { isSuccessfulResponse } from "Lib/server/response"
 import fetch from "node-fetch"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import { Router, withRouter } from "next/router"
 import PartialUser from "Models/PartialUser"
 
@@ -78,11 +78,11 @@ class ProfileSetupPage extends Component<
       })
 
       if (response.status !== ResponseCode.NO_CONTENT) {
-        const { error } = await response.json()
+        const { message } = await response.json()
 
-        if (error) {
+        if (message) {
           this.setState({
-            errorMessage: error,
+            errorMessage: message,
           })
         }
       } else {

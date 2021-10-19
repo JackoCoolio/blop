@@ -1,10 +1,10 @@
 import nextConnect from "next-connect"
 import { NextApiRequest, NextApiResponse } from "next"
 import { parseCookies } from "nookies"
-import { isVerifiedEnv } from "Lib/env"
+import { isVerifiedEnv } from "Lib/server/env"
 import User from "Models/User"
 import Session from "Models/Session"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import PartialUser from "Models/PartialUser"
 
 const handler = nextConnect()

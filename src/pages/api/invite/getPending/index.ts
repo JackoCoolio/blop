@@ -5,7 +5,7 @@ import {
 } from "Middleware/loginChecker"
 import { NextApiRequest, NextApiResponse } from "next"
 import User from "Models/User"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import Invite from "Models/Invite"
 
 const handler = nextConnect()

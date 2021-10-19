@@ -1,4 +1,4 @@
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import {
   AuthenticatedRequest,
   authenticationMiddleware,
@@ -8,9 +8,9 @@ import { err, ok, Result } from "neverthrow"
 import { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
 import update, { Spec } from "immutability-helper"
-import { getUserInformation } from "Lib/user"
+import { getUserInformation } from "Lib/server/user"
 import PartialUser from "Models/PartialUser"
-import { finalizeUser } from "Lib/userSetup"
+import { finalizeUser } from "Lib/server/userSetup"
 
 const handler = nextConnect()
 
@@ -67,10 +67,16 @@ export async function updateUser(
       })
     }
 
-    // finalize the user with the given changes
-    await finalizeUser(partialUserDoc._id, change)
-
-    return ok(undefined)
+    // finalize the user with the given changes or pass along the error
+    const finalizeUserResult = await finalizeUser(partialUserDoc._id, change)
+    if (finalizeUserResult.isOk()) {
+      return ok(undefined)
+    } else {
+      return err({
+        message: finalizeUserResult.error.message,
+        statusCode: ResponseCode.INTERNAL_SERVER_ERROR,
+      })
+    }
   } else {
     // change the local copy of the doc
     userDoc = update(userDoc, change)
