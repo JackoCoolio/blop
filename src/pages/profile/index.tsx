@@ -161,7 +161,6 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
                     valid: await this.isFormValid(),
                   })
                 }}
-                className={styles.profileField}
               />
             </div>
             <Button
