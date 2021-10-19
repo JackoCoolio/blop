@@ -17,13 +17,27 @@
   overflow-y: scroll;
 }
 
-#settingsPane {
+#settingsContainer {
+  margin: auto auto;
   display: flex;
   flex-direction: column;
 
   align-items: center;
   justify-content: center;
-  width: 100%;
+
+  border-radius: 2rem;
+  background-color: var(--blop-gray);
+
+  height: fit-content;
+  width: 80%;
+}
+
+#settingsContainer > * {
+  margin-bottom: 1rem;
+}
+
+#searchBar {
+  width: 80%;
 }
 
 #inviteField {

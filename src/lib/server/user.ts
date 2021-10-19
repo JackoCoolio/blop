@@ -1,6 +1,7 @@
 import { Result, ok, err } from "neverthrow"
 import { ResponseCode } from "./util"
 import User, { UserInterface } from "Models/User"
+import FriendsList from "Models/FriendsList"
 import { Document } from "mongoose"
 
 // the base information about a given user that users should be able to see
@@ -63,11 +64,39 @@ export async function getUserInformation(
 export async function searchForUsers(
   query: string,
   limit: number,
+  scope: "all" | "friends",
   searcherId?: string
 ): Promise<
-  Result<(Document<any, any, UserInterface> & UserInterface)[], void>
+  Result<(Document<any, any, UserInterface> & UserInterface)[], Error>
 > {
-  let searchResultDocumentsQuery = User.fuzzySearch(query)
+  let searchResultDocumentsQuery
+  if (scope === "all") {
+    searchResultDocumentsQuery = User.fuzzySearch(query)
+  } else if (scope === "friends") {
+    if (!searcherId) {
+      return err(
+        new Error("searcherId must be defined in order to search friends!")
+      )
+    }
+
+    const friendsList = await FriendsList.findById(searcherId)
+    if (!friendsList) {
+      return err(new Error("Invalid searcherId!"))
+    }
+
+    searchResultDocumentsQuery = User.find({
+      _id: {
+        $in: friendsList.friends.map(friend => friend.id),
+      },
+      // mongoose-fuzzy-search's .fuzzySearch(query) method doesn't work here
+      // so we use this instead
+      $text: {
+        $search: query,
+      },
+    })
+  } else {
+    return err(new Error("Invalid search scope! Must be  'all' or 'friends'"))
+  }
 
   // don't show matches with the given userId
   if (searcherId) {

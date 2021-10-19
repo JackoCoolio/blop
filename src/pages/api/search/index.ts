@@ -4,11 +4,16 @@ import { ResponseCode } from "Lib/server/util"
 import { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
 import { parseCookies } from "nookies"
+import { authenticationMiddleware } from "Middleware/loginChecker"
 
 const handler = nextConnect()
 
+// require user to be logged in
+handler.use(authenticationMiddleware)
+
 handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
-  const { query, limit, excludeMe } = JSON.parse(req.body)
+  const { query, limit, excludeMe, scope = "all" } = JSON.parse(req.body)
+
   if (
     !query ||
     typeof query !== "string" ||
@@ -32,7 +37,12 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // search for users with the query
-  const userDocumentsResult = await searchForUsers(query, limit, searcherId)
+  const userDocumentsResult = await searchForUsers(
+    query,
+    limit,
+    scope,
+    searcherId
+  )
 
   if (userDocumentsResult.isOk()) {
     // format the returned documents to remove private information

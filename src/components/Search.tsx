@@ -83,17 +83,20 @@ export class Search extends Component<SearchProps, SearchState> {
     const resultList = this.generateSearchResultList()
 
     return (
-      <div className={classNames(this.props.className, styles.main)}>
+      <div
+        className={classNames(this.props.className, styles.main)}
+        id={this.props.id}
+      >
         <Input
           color={this.props.color}
           className={styles.searchInput}
           promptText={this.props.promptText}
-          onFocus={e =>
+          onFocus={() =>
             this.setState({
               showResults: true,
             })
           }
-          onBlur={e =>
+          onBlur={() =>
             this.setState({
               showResults: false,
             })
