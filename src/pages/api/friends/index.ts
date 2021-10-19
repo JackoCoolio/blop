@@ -5,7 +5,7 @@ import {
 } from "Middleware/loginChecker"
 import { NextApiRequest, NextApiResponse } from "next/dist/shared/lib/utils"
 import FriendsList from "Models/FriendsList"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import { Result, err, ok } from "neverthrow"
 
 const handler = nextConnect()

@@ -1,5 +1,5 @@
 import styles from "Styles/GameCard.module.scss"
-import { GameType } from "Lib/game"
+import { GameType } from "Lib/client/game"
 import { Component } from "react"
 import classNames from "classnames"
 

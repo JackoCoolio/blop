@@ -1,4 +1,4 @@
-import { BaseGameInterface } from "Lib/game/base"
+import { BaseGameInterface } from "Lib/client/game/base"
 
 export type TicTacToePiece = "x" | "o" | ""
 

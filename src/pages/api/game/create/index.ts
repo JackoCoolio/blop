@@ -1,8 +1,8 @@
 import nextConnect from "next-connect"
 import { NextApiRequest, NextApiResponse } from "next"
-import { GameType, isGameType } from "Lib/game"
+import { GameType, isGameType } from "Lib/client/game"
 import { createTicTacToeGame } from "Models/Game"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import {
   authenticationMiddleware,
   AuthenticatedRequest,

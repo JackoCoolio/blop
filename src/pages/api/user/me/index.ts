@@ -1,4 +1,4 @@
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import {
   AuthenticatedRequest,
   authenticationMiddleware,
@@ -8,9 +8,9 @@ import { err, ok, Result } from "neverthrow"
 import { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
 import update, { Spec } from "immutability-helper"
-import { getUserInformation } from "Lib/user"
+import { getUserInformation } from "Lib/server/user"
 import PartialUser from "Models/PartialUser"
-import { finalizeUser } from "Lib/userSetup"
+import { finalizeUser } from "Lib/server/userSetup"
 
 const handler = nextConnect()
 

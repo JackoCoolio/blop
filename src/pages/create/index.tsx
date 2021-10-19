@@ -1,13 +1,13 @@
 import styles from "Styles/CreateGamePage.module.scss"
 import { withRouter, Router } from "next/router"
 import React, { Component, KeyboardEvent } from "react"
-import { GameType } from "Lib/game"
+import { GameType } from "Lib/client/game"
 import { GameTypeCard, GameMetadata } from "Components/GameTypeCard"
 import { InviteListItem } from "Components/InviteListItem"
 import update from "immutability-helper"
 import fetch from "node-fetch"
 import { parseCookies } from "nookies"
-import { isSessionLoggedIn } from "Lib/session"
+import { isSessionLoggedIn } from "Lib/server/session"
 import { Button } from "Components/Button"
 
 const games: GameMetadata[] = [

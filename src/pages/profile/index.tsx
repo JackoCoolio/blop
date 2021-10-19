@@ -4,12 +4,12 @@ import { Button } from "Components/Button"
 import fetch from "node-fetch"
 import update from "immutability-helper"
 import { Input } from "Components/Input"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import CheckIcon from "../../../public/check.svg"
 import XIcon from "../../../public/ttt-x.svg"
 import { Search, SearchResult } from "Components/Search"
 import { parseCookies } from "nookies"
-import { isSessionLoggedIn } from "Lib/session"
+import { isSessionLoggedIn } from "Lib/server/session"
 
 const bannedUsernameCharactersRegex = /[^A-Za-z0-9\-_]/
 

@@ -1,7 +1,7 @@
 import nextConnect from "next-connect"
 import { NextApiRequest, NextApiResponse } from "next"
 import Game from "Models/Game"
-import { ResponseCode } from "Lib/util"
+import { ResponseCode } from "Lib/server/util"
 import {
   authenticationMiddleware,
   AuthenticatedRequest,

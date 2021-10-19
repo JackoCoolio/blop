@@ -2,7 +2,7 @@ import styles from "Styles/Dashboard.module.scss"
 import { withRouter, Router } from "next/router"
 import { Component } from "react"
 import { parseCookies } from "nookies"
-import { isSessionLoggedIn } from "Lib/session"
+import { isSessionLoggedIn } from "Lib/server/session"
 
 interface DashboardProps {
   router: Router

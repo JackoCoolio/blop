@@ -1,5 +1,5 @@
-import { isSuccessfulResponse } from "Lib/response"
-import { ResponseCode } from "Lib/util"
+import { isSuccessfulResponse } from "Lib/server/response"
+import { ResponseCode } from "Lib/server/util"
 import { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
 import { parseCookies, setCookie } from "nookies"
