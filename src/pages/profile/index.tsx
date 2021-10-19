@@ -2,7 +2,6 @@ import styles from "Styles/ProfilePage.module.scss"
 import React, { Component } from "react"
 import { Button } from "Components/Button"
 import fetch from "node-fetch"
-import update from "immutability-helper"
 import { Input } from "Components/Input"
 import { ResponseCode } from "Lib/server/util"
 import CheckIcon from "../../../public/check.svg"
@@ -10,17 +9,12 @@ import XIcon from "../../../public/ttt-x.svg"
 import { Search, SearchResult } from "Components/Search"
 import { parseCookies } from "nookies"
 import { isSessionLoggedIn } from "Lib/server/session"
+import { getFriendsList, FriendData } from "Lib/client/friends"
 
 const bannedUsernameCharactersRegex = /[^A-Za-z0-9\-_]/
 
-interface FriendData {
-  username: string | null
-  since: Date | null
-  isRequest: boolean
-}
-
 interface ProfilePageState {
-  friends: Map<string, FriendData>
+  friends: FriendData[]
   usernameInput: React.RefObject<Input>
   valid: boolean
   errorMessage: string
@@ -32,7 +26,7 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
     super(props)
 
     this.state = {
-      friends: new Map(),
+      friends: [],
       usernameInput: React.createRef(),
       valid: false,
       errorMessage: "",
@@ -69,48 +63,15 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
   }
 
   async componentDidMount() {
-    const friendsList = await fetch("/api/friends", {
-      method: "get",
-    }).then(x => x.json())
-
-    // get information about myself
-    const meInformation = await fetch("/api/user/me", {
-      method: "get",
-    }).then(x => x.json())
-
-    // update state with that information
     this.setState({
-      currentUsername: meInformation.username,
-    })
-
-    // make sure we actually get an array back
-    if (!Array.isArray(friendsList)) {
-      return
-    }
-
-    // for each friend that we get back, add it to the list
-    friendsList.forEach(async friend => {
-      if (!friend.id) return
-
-      // get information about user
-      const friendUserInformation = await fetch(
-        `/api/user?id=${friend.id}`
-      ).then(x => x.json())
-
-      // update state with information
-      this.setState(
-        update(this.state, {
-          friends: {
-            [friend.id]: {
-              $set: {
-                username: friendUserInformation.username,
-                since: new Date(friend.since),
-                isRequest: friend.since === null,
-              },
-            },
-          },
-        })
-      )
+      // get the user's current username
+      currentUsername: (
+        await fetch("/api/user/me", {
+          method: "get",
+        }).then(x => x.json())
+      ).username,
+      // get the user's friends list
+      friends: await getFriendsList(true),
     })
   }
 
@@ -148,9 +109,8 @@ class ProfilePage extends Component<unknown, ProfilePageState> {
     const friendCards: any = []
     let iter = 0
     this.state.friends.forEach(friend => {
-      console.log(friend)
       let info
-      if (friend.isRequest) {
+      if (friend.since === null) {
         info = (
           <div className={styles.friendOptions}>
             <div className={styles.friendButton} id={styles.accept}>
