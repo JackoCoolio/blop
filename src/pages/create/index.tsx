@@ -1,6 +1,6 @@
 import styles from "Styles/CreateGamePage.module.scss"
 import { withRouter, Router } from "next/router"
-import React, { Component, KeyboardEvent } from "react"
+import React, { Component } from "react"
 import { GameType } from "Lib/client/game"
 import { GameTypeCard, GameMetadata } from "Components/GameTypeCard"
 import { InviteListItem } from "Components/InviteListItem"
@@ -9,6 +9,7 @@ import fetch from "node-fetch"
 import { parseCookies } from "nookies"
 import { isSessionLoggedIn } from "Lib/server/session"
 import { Button } from "Components/Button"
+import { Search, SearchResult } from "Components/Search"
 
 const games: GameMetadata[] = [
   {
@@ -20,6 +21,11 @@ const games: GameMetadata[] = [
   },
 ]
 
+interface Invitee {
+  id: string
+  username: string
+}
+
 interface CreatePageProps {
   router: Router
 }
@@ -27,10 +33,9 @@ interface CreatePageProps {
 interface CreatePageState {
   selectedGameType?: GameType
   selectedCard?: number
-  invitees: string[]
+  invitees: Invitee[]
   minAllowedInvites: number
   maxAllowedInvites: number
-  inviteField: React.RefObject<HTMLInputElement> | null
 }
 
 class CreatePage extends Component<CreatePageProps, CreatePageState> {
@@ -40,13 +45,11 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
     this.state = {
       minAllowedInvites: 0,
       maxAllowedInvites: 0,
-      inviteField: null,
 
       invitees: [],
     }
 
     this.createGame = this.createGame.bind(this)
-    this.handleInputKey = this.handleInputKey.bind(this)
   }
 
   async createGame() {
@@ -80,21 +83,6 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
     this.props.router.push(`/game/${id}`)
   }
 
-  handleInputKey(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      // add the user to the list
-      const newState = update(this.state, {
-        invitees: {
-          $push: [e.currentTarget.value],
-        },
-      })
-      this.setState(newState)
-
-      // clear the input field
-      e.currentTarget.value = ""
-    }
-  }
-
   render() {
     const testItems = []
     for (let i = 0; i < 50; i++) {
@@ -126,12 +114,12 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
       inviteCards.push(
         <InviteListItem
           key={i}
-          name={invitee}
-          onDelete={name => {
+          name={invitee.username}
+          onDelete={() => {
             const newState = update(this.state, {
               invitees: {
-                $apply: function (arr: string[]) {
-                  return arr.filter(x => x !== name)
+                $apply: function (arr: Invitee[]) {
+                  return arr.filter(x => x.username !== invitee.username)
                 },
               },
             })
@@ -144,33 +132,79 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
     return (
       <div id={styles.main}>
         <div id={styles.listPane}>{testItems}</div>
-        <div id={styles.settingsPane}>
-          <h1>Game Setup</h1>
+        <div>
+          <div id={styles.settingsContainer}>
+            <h1>Game Setup</h1>
 
-          <h2>Invite Players:</h2>
-          <input
-            type="text"
-            id={styles.inviteField}
-            onKeyDown={this.handleInputKey}
-          ></input>
-          {inviteCards}
-          <Button
-            disabled={!this.state.selectedGameType}
-            color="red"
-            onClick={async () => {
-              await this.createGame()
-            }}
-            id={styles.startButton}
-          >
-            Start
-          </Button>
+            {inviteCards.length === 0 || <h2>Invitees</h2>}
+
+            {inviteCards}
+            <Search
+              color="blue"
+              promptText="Invite friends..."
+              id={styles.searchBar}
+              search={async query => {
+                const searchRequestResult = await fetch("/api/search", {
+                  method: "post",
+                  body: JSON.stringify({
+                    query,
+                    limit: 5,
+                    scope: {
+                      group: "friends",
+                      exclude: {
+                        me: true,
+                        friends: false,
+                        users: this.state.invitees.map(x => x.id),
+                      },
+                    },
+                  }),
+                }).then(x => x.json())
+
+                // create array of search results
+                const formattedResults: SearchResult[] =
+                  searchRequestResult.matches.map((result: any) => {
+                    return {
+                      displayText: result.username,
+                      onSelect: async () => {
+                        // when a user is selected add them to the invitees list
+                        this.setState(
+                          update(this.state, {
+                            invitees: {
+                              $push: [
+                                {
+                                  id: result.id,
+                                  username: result.username,
+                                },
+                              ],
+                            },
+                          })
+                        )
+                      },
+                    }
+                  })
+
+                return formattedResults
+              }}
+              searchInterval={1000}
+            />
+            <Button
+              disabled={!this.state.selectedGameType}
+              color="red"
+              onClick={async () => {
+                await this.createGame()
+              }}
+              id={styles.startButton}
+            >
+              Start
+            </Button>
+          </div>
         </div>
       </div>
     )
   }
 }
 
-export async function getServerSideProps({ req, res, router }: any) {
+export async function getServerSideProps({ req }: any) {
   const { session } = parseCookies({ req })
   const isLoggedIn = await isSessionLoggedIn(session)
 

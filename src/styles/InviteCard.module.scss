@@ -18,6 +18,12 @@
   height: 3rem;
 
   margin-bottom: 1rem;
+
+  transition: background-color 0.1s ease;
+}
+
+.main:hover {
+  background-color: var(--blop-light-gray);
 }
 
 .name {

@@ -1,6 +1,7 @@
 import { Result, ok, err } from "neverthrow"
 import { ResponseCode } from "./util"
 import User, { UserInterface } from "Models/User"
+import FriendsList from "Models/FriendsList"
 import { Document } from "mongoose"
 
 // the base information about a given user that users should be able to see
@@ -53,27 +54,79 @@ export async function getUserInformation(
   return ok(result)
 }
 
+interface SearchScope {
+  group: "all" | "friends"
+  exclude: {
+    me: boolean
+    friends: boolean
+    users: string[]
+  }
+}
+
 /**
  * Searches for users with the given query string and excludes the given user if `searcherId` is provided.
  * @param query the query string
  * @param limit the maximum number of users to return
- * @param searcherId the ID of the searcher
+ * @param scope a SearchScope object that defines the search scope
+ * @param userId the ID of the searcher
  * @returns a list of User documents
  */
 export async function searchForUsers(
   query: string,
   limit: number,
-  searcherId?: string
+  scope: SearchScope,
+  userId: string
 ): Promise<
-  Result<(Document<any, any, UserInterface> & UserInterface)[], void>
+  Result<(Document<any, any, UserInterface> & UserInterface)[], Error>
 > {
-  let searchResultDocumentsQuery = User.fuzzySearch(query)
+  // get friends list if it will be needed
+  if (scope.group === "friends" || scope.exclude.friends) {
+    const friendsList = await FriendsList.findById(userId)
+    if (!friendsList) {
+      return err(new Error("Invalid searcherId!"))
+    }
+    var friendIds = friendsList.friends.map(friend => friend.id)
+  }
+
+  let searchResultDocumentsQuery
+  if (scope.group === "all") {
+    searchResultDocumentsQuery = User.fuzzySearch(query)
+  } else if (scope.group === "friends") {
+    if (!userId) {
+      return err(
+        new Error("searcherId must be defined in order to search friends!")
+      )
+    }
+
+    searchResultDocumentsQuery = User.find({
+      _id: {
+        $in: friendIds!,
+        $nin: scope.exclude.users,
+      },
+      // mongoose-fuzzy-search's .fuzzySearch(query) method doesn't work here
+      // so we use this instead
+      $text: {
+        $search: query,
+      },
+    })
+  } else {
+    return err(
+      new Error("Invalid search scope group! Must be  'all' or 'friends'")
+    )
+  }
 
   // don't show matches with the given userId
-  if (searcherId) {
+  if (scope.exclude.me) {
     searchResultDocumentsQuery = searchResultDocumentsQuery
       .where("_id")
-      .ne(searcherId)
+      .ne(userId)
+  }
+
+  // don't show friends
+  if (scope.exclude.friends) {
+    searchResultDocumentsQuery = searchResultDocumentsQuery
+      .where("_id")
+      .nin(friendIds!)
   }
 
   const searchResultDocuments = await searchResultDocumentsQuery.limit(limit)
