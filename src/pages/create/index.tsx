@@ -49,38 +49,31 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
       invitees: [],
     }
 
-    this.createGame = this.createGame.bind(this)
+    this.createGameAndSendInvites = this.createGameAndSendInvites.bind(this)
   }
 
-  async createGame() {
-    try {
-      var response = await fetch("/api/game/create", {
-        method: "post",
-        body: JSON.stringify({
-          type: this.state.selectedGameType,
-        }),
-      })
-    } catch (e) {
-      return console.error(e)
-    }
+  async createGameAndSendInvites(): Promise<void> {
+    // create the game
+    var createGameResponse = await fetch("/api/game/create", {
+      method: "post",
+      body: JSON.stringify({
+        type: this.state.selectedGameType,
+      }),
+    }).then(x => x.json())
 
-    // get the ID of the created game
-    const { id } = await response.json()
+    const gameId = createGameResponse.id
 
-    try {
-      await fetch("/api/invite/create", {
-        method: "post",
-        body: JSON.stringify({
-          invitees: this.state.invitees,
-          gameId: id,
-        }),
-      })
-    } catch (e) {
-      return console.error(e)
-    }
+    // send the invites
+    await fetch("/api/invite/create", {
+      method: "post",
+      body: JSON.stringify({
+        invitees: this.state.invitees.map(x => x.id),
+        gameId,
+      }),
+    })
 
     // redirect to the new game
-    this.props.router.push(`/game/${id}`)
+    this.props.router.push(`/game/${gameId}`)
   }
 
   render() {
@@ -191,7 +184,7 @@ class CreatePage extends Component<CreatePageProps, CreatePageState> {
               disabled={!this.state.selectedGameType}
               color="red"
               onClick={async () => {
-                await this.createGame()
+                await this.createGameAndSendInvites()
               }}
               id={styles.startButton}
             >

@@ -1,29 +1,113 @@
 #main {
-  position: relative;
-  width: 100%;
-
+  height: 100%;
   display: grid;
-  grid-template-columns: 40% 60%;
-  column-gap: 3rem;
-  overflow: hidden;
+  grid-template-columns: 25% 0% 75%;
 }
 
-#invitesPane {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  display: grid;
-  grid-template-columns: auto;
-  row-gap: 0.5rem;
-  width: 100%;
-  overflow-y: scroll;
+.paneHeader {
+  height: fit-content;
+  text-align: center;
+}
+
+#paneDivider {
+  border-left: solid 1px var(--blop-light-gray);
 }
 
 #gamesPane {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  display: grid;
-  grid-template-columns: auto;
-  row-gap: 0.5rem;
+  position: relative;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  height: 95%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#gamesGalleryContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+#gamesGallery {
+  position: relative;
+  overflow-y: auto;
   width: 100%;
-  overflow-y: scroll;
+  height: 100%;
+  text-align: center;
+}
+
+.gameCard {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 1rem;
+  background-color: var(--blop-gray);
+  width: 16rem;
+  height: 16rem;
+  text-align: center;
+
+  margin: 0.5rem 0.5rem;
+
+  border: solid 3px transparent;
+
+  user-select: none;
+
+  transition: border-color 0.2s ease;
+}
+
+.gameCard:hover {
+  border-color: var(--blop-red);
+}
+
+#invitesPane {
+  position: relative;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  height: 95%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#invitesListContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+#invitesList {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inviteCard {
+  background-color: var(--blop-gray);
+  width: 95%;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 1rem;
+
+  margin: 0.5rem 0.5rem;
+  padding-bottom: 0.5rem;
+
+  user-select: none;
+
+  text-align: center;
+}
+
+.inviteOptions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }

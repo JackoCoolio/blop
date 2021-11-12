@@ -20,7 +20,9 @@ body {
   margin: 0;
   background-color: #06060f;
   color: var(--blop-white);
-  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  // overflow: hidden;
 }
 
 * {
@@ -46,4 +48,12 @@ a {
   grid-template-rows: 5rem auto;
   width: 100vw;
   height: 100vh;
+}
+
+#blopContent {
+  position: absolute;
+  width: 100%;
+  top: 5rem;
+  bottom: 0;
+  overflow: hidden;
 }

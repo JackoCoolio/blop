@@ -8,7 +8,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <div id="blop">
       <BlopNavbar />
-      <Component {...pageProps} />
+      <div id="blopContent">
+        <Component {...pageProps} />
+      </div>
     </div>
   )
 }

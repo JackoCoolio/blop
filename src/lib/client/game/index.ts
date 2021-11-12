@@ -3,13 +3,37 @@ import {
   TicTacToeState,
 } from "Lib/client/game/tictactoe"
 
-export type GameType = "tictactoe"
+// an array of game types
+const gameTypes = ["tictactoe"] as const
+
+export type GameType = typeof gameTypes[number]
 export function isGameType(x: any): x is GameType {
-  return ["tictactoe"].includes(x)
+  return gameTypes.includes(x)
 }
 
 export function isUsersTurn(userId: string, game: GameInterface): boolean {
   return game.players[game.turn % game.players.length] === userId
+}
+
+export interface PrettyGameType {
+  title: string
+  description: string
+}
+
+export function getPrettyGameType(type: GameType): PrettyGameType {
+  switch (type) {
+    case "tictactoe":
+      return {
+        title: "Tic-Tac-Toe",
+        description:
+          "A two-player game that rarely ends in anything but a draw.",
+      }
+    default:
+      return {
+        title: "Unknown",
+        description: "",
+      }
+  }
 }
 
 export type GameState = TicTacToeState
