@@ -17,7 +17,6 @@ class ErrorPage extends Component<ErrorPageProps, unknown> {
 }
 
 export async function getServerSideProps({ res, err }: any) {
-  console.log(res)
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404
   return {
     props: {

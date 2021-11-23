@@ -28,7 +28,7 @@ class GameHandler extends Component<
 
   async componentDidMount() {
     const [gameResponse, userResponse] = await Promise.all([
-      fetch(`/api/game/${this.props.gameId}`, {
+      fetch(`/api/game/${this.props.gameId}/state`, {
         method: "get",
       }),
       fetch(`/api/session`, {

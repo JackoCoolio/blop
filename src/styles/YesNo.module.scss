@@ -1,0 +1,35 @@
+.main {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  border-radius: 50%;
+  border-color: var(--button-bg-color);
+  border-style: solid;
+  border-width: 3px;
+  fill: white;
+  transition: background-color 0.15s ease;
+  font-size: 0;
+  margin: 0 1rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--button-bg-color);
+}
+
+.icon {
+  position: relative;
+  height: 1rem;
+  margin: 1rem;
+  width: fit-content;
+}
+
+.yes {
+  --button-bg-color: var(--blop-green);
+}
+
+.no {
+  --button-bg-color: var(--blop-red);
+}

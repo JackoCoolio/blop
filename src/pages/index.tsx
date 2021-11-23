@@ -1,8 +1,8 @@
 import Head from "next/head"
 import { Component } from "react"
-// import styles from "Styles/Home.module.scss"
+import styles from "Styles/Home.module.scss"
 import fetch from "node-fetch"
-// import AppContainer from "Components/AppContainer"
+import Logo from "public/blop.svg"
 
 interface HomeState {
   loggedIn: boolean
@@ -33,43 +33,62 @@ export default class Home extends Component<unknown, HomeState> {
     }
   }
 
+  getLogoArray() {
+    const logos = []
+    const colors = [
+      "var(--blop-yellow)",
+      "var(--blop-green)",
+      "var(--blop-red)",
+      "var(--blop-blue)",
+      "var(--blop-white)",
+    ]
+
+    // how much the logos are offset from each other
+    const scale = 0.75
+    for (let i = 0; i < colors.length; i++) {
+      // some fancy math to ensure that the final stacked logos are centered
+      const offset = scale * (2 * i - (colors.length - 1))
+      logos.push(
+        <div
+          key={i}
+          className={styles.bgLogoContainer}
+          style={{
+            zIndex: i,
+            left: offset + "vh",
+          }}
+        >
+          <Logo
+            className={styles.bgLogo}
+            style={{
+              fill: colors[i],
+            }}
+          />
+        </div>
+      )
+    }
+
+    return logos
+  }
+
   render() {
     return (
-      <>
+      <div id={styles.main}>
         <Head>
           <title>Blop</title>
           <meta name="description" content="Blop!" />
         </Head>
 
-        <main>
-          <h1>Blop</h1>
-        </main>
+        <div id={styles.bgLogos}>{this.getLogoArray()}</div>
 
-        {/* <h1>Blop</h1>
-
-        <p>
-          {this.state.loggedIn ? `You're logged in!` : `Login with Discord!`}
-        </p>
-
-        <div>
-          <a
-            href={process.env.DISCORD_AUTH_URL}
-            hidden={this.state.loggedIn}
-          >
-            <h2>Login with Discord &rarr;</h2>
-            <p>Blop uses Discord for user authentication.</p>
-          </a>
-          <Link href="/dashboard">
-            <a>
-              <h2>Dashboard &rarr;</h2>
-              <p>
-                Go to your dashboard, where you can see the list of games you
-                are currently playing.
-              </p>
-            </a>
-          </Link>
-        </div> */}
-      </>
+        <h1 id={styles.subtitle}>
+          your favorite ta
+          <span className={styles.blue}>b</span>
+          <span className={styles.red}>l</span>
+          et
+          <span className={styles.green}>o</span>
+          <span className={styles.yellow}>p</span> games, in one place!
+        </h1>
+      </div>
     )
   }
 }
