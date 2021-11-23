@@ -3,15 +3,6 @@ module.exports = {
   eslint: {
     dirs: ["src/"],
   },
-  async redirects() {
-    return [
-      {
-        source: "/login",
-        destination: process.env.DISCORD_AUTH_URL,
-        permanent: false,
-      },
-    ]
-  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
