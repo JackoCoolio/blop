@@ -1,13 +1,17 @@
 import styles from "Styles/Button.module.scss"
-import { Component, MouseEventHandler } from "react"
+import { Component, MouseEventHandler, CSSProperties } from "react"
 import classNames from "classnames"
+import Link from "next/link"
+import { Url } from "url"
 
 interface ButtonProps {
   id?: string
   color: "blue" | "red" | "green" | "yellow"
-  onClick: MouseEventHandler<HTMLButtonElement>
+  onClick?: MouseEventHandler<HTMLButtonElement>
+  href?: string | Url
   disabled?: boolean
   className?: string
+  style?: CSSProperties
 }
 
 /**
@@ -16,7 +20,8 @@ interface ButtonProps {
 export class Button extends Component<ButtonProps> {
   render() {
     const { disabled = false } = this.props
-    return (
+
+    const button = (
       <button
         id={this.props.id}
         className={classNames([
@@ -29,6 +34,18 @@ export class Button extends Component<ButtonProps> {
       >
         {this.props.children}
       </button>
+    )
+
+    return (
+      <div style={this.props.style}>
+        {this.props.href ? (
+          <Link href={this.props.href} passHref>
+            <a>{button}</a>
+          </Link>
+        ) : (
+          button
+        )}
+      </div>
     )
   }
 }
