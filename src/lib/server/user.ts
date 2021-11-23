@@ -133,3 +133,45 @@ export async function searchForUsers(
 
   return ok(searchResultDocuments)
 }
+
+const allowedGetMatchingUsersOptions = ["_id", "username"]
+interface GetMatchingUsersOptions {
+  _id?: string
+  username?: string
+}
+
+interface UserMatch {
+  id: string
+  username: string
+}
+
+export async function getMatchingUsers(
+  options: GetMatchingUsersOptions
+): Promise<Result<UserMatch[], ApiError>> {
+  const keys = Object.keys(options)
+
+  for (const key of keys) {
+    if (!allowedGetMatchingUsersOptions.includes(key)) {
+      return err({
+        statusCode: ResponseCode.BAD_REQUEST,
+        message: "Invalid query parameters!",
+      })
+    }
+  }
+
+  const info = await User.find({ ...options })
+
+  // format output
+  const output: UserMatch[] = info.map(doc => {
+    return {
+      id: doc._id,
+      username: doc.username,
+    }
+  })
+
+  if (!info) {
+    return ok([])
+  }
+
+  return ok(output)
+}

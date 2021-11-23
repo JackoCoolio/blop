@@ -47,16 +47,14 @@ class ProfileSetupPage extends Component<
     }
 
     if (!local) {
-      const response = await fetch("/api/user", {
+      const matches = await fetch("/api/user", {
         method: "POST",
         body: JSON.stringify({
           username,
         }),
       }).then(x => x.json())
 
-      console.log(response)
-
-      if (response.matches.length > 0) {
+      if (matches.length > 0) {
         return false
       }
     }
