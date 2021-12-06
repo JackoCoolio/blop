@@ -20,7 +20,7 @@ export interface PrettyGameType {
   description: string
 }
 
-export function getPrettyGameType(type: GameType): PrettyGameType {
+export function getPrettyGameType(type: string): PrettyGameType {
   switch (type) {
     case "tictactoe":
       return {

@@ -7,6 +7,7 @@ import {
   authenticationMiddleware,
   AuthenticatedRequest,
 } from "Middleware/loginChecker"
+import User from "Models/User"
 
 interface GameCreateBody {
   type: GameType
@@ -39,7 +40,6 @@ handler.post(
       // parse the request body
       var { type } = await parseBody(req.body)
     } catch (error) {
-      console.log("error parsing body")
       return res.status(ResponseCode.BAD_REQUEST).json({ error })
     }
 
@@ -55,7 +55,15 @@ handler.post(
           .json({ error: "Invalid game type!" })
     }
 
-    console.log("returning new game info")
+    await User.updateOne(
+      { _id: req.userId },
+      {
+        $push: {
+          games: gameDoc._id,
+        },
+      }
+    )
+
     return res.status(ResponseCode.CREATED).json({ id: gameDoc._id })
   }
 )

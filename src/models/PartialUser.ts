@@ -4,6 +4,7 @@ import { nanoid } from "nanoid"
 export interface PartialUserInterface {
   _id: string
   discordId: string
+  accessToken: string
   refreshToken: string
 }
 
@@ -18,6 +19,10 @@ const PartialUserSchema = new mongoose.Schema<
   },
   discordId: {
     type: String,
+  },
+  accessToken: {
+    type: String,
+    required: true,
   },
   refreshToken: {
     type: String,
