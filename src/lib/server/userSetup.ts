@@ -12,14 +12,18 @@ import update, { Spec } from "immutability-helper"
  * @returns the created user document in a Result
  */
 export async function createUser(
-  refreshToken: string
+  accessToken: string,
+  refreshToken: string,
+  discordId: string
 ): Promise<
   Result<Document<any, any, PartialUserInterface> & PartialUserInterface, Error>
 > {
   // create the user document
   try {
     var partialUserDoc = await PartialUser.create({
+      accessToken,
       refreshToken,
+      discordId,
       // games: [],
       // partialUser: true,
       // pendingInvites: [],

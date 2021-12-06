@@ -53,12 +53,20 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { accessToken, refreshToken } = await fetchToken(body)
 
-  var userDoc =
-    (await User.findOne({ refreshToken })) ||
-    (await PartialUser.findOne({ refreshToken }))
+  // get discord ID
+  const discordProfile = await getUser(accessToken)
+
+  let userDoc =
+    (await User.findOne({ discordId: discordProfile.id })) ||
+    (await PartialUser.findOne({ discordId: discordProfile.id }))
 
   if (!userDoc) {
-    const userDocResult = await createUser(refreshToken)
+    const userDocResult = await createUser(
+      accessToken,
+      refreshToken,
+      discordProfile.id
+    )
+
     if (userDocResult.isOk()) {
       userDoc = userDocResult.value
     } else {
@@ -77,17 +85,14 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   })
 
   if (!Object.keys(userDoc).includes("username")) {
-    // set up new user
-    res.redirect("/profile/setup")
-
-    const discordProfile = await getUser(accessToken)
-
     userDoc.discordId = discordProfile.id
 
     await userDoc.save()
-  } else {
-    res.redirect("/dashboard")
+
+    return res.redirect("/profile/setup")
   }
+
+  return res.redirect("/create")
 })
 
 export default handler
