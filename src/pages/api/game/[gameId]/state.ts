@@ -6,19 +6,38 @@ import {
   authenticationMiddleware,
   AuthenticatedRequest,
 } from "Middleware/loginChecker"
+import { GameInterface, isUsersTurn } from "Lib/client/game"
 
 const handler = nextConnect()
 
 // block unauthorized requests
 handler.use(authenticationMiddleware)
 
-handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
-  const gameId = req.query.gameId
+handler.get(
+  async (req: NextApiRequest & AuthenticatedRequest, res: NextApiResponse) => {
+    const gameId = req.query.gameId
 
-  const gameDoc = await Game.findById(gameId)
+    const gameDoc = await Game.findById(gameId)
 
-  res.status(200).json(gameDoc)
-})
+    if (!gameDoc) {
+      return res
+        .status(ResponseCode.BAD_REQUEST)
+        .json({ message: "Invalid game id!" })
+    }
+
+    const out: GameInterface = {
+      _id: gameDoc._id,
+      created: gameDoc.created,
+      type: gameDoc.type,
+      myTurn: isUsersTurn(req.userId, gameDoc),
+      players: gameDoc.players,
+      state: gameDoc.state,
+      turn: gameDoc.turn,
+    }
+
+    res.status(ResponseCode.OK).json(out)
+  }
+)
 
 handler.patch(
   async (req: AuthenticatedRequest & NextApiRequest, res: NextApiResponse) => {
@@ -48,8 +67,7 @@ handler.patch(
     gameDoc.markModified("turn")
     await gameDoc.save()
 
-    console.log("success")
-    res.status(ResponseCode.NO_CONTENT)
+    res.status(ResponseCode.NO_CONTENT).end()
   }
 )
 
