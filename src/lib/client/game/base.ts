@@ -3,6 +3,7 @@ export interface GameMetadata {
   type: string
   players: string[]
   turn: number
+  myTurn: boolean
   created: Date
 }
 

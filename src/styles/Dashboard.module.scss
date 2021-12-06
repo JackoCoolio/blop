@@ -55,6 +55,10 @@
   user-select: none;
 
   transition: border-color 0.2s ease;
+
+  vertical-align: middle;
+
+  color: var(--blop-white);
 }
 
 .gameCard:hover {

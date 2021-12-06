@@ -1,3 +1,4 @@
+import { isUsersTurn } from "Lib/client/game"
 import { GameMetadata } from "Lib/client/game/base"
 import Game from "Models/Game"
 import User from "Models/User"
@@ -35,13 +36,15 @@ export async function getCurrentGames(
       created: gameDoc.created,
       players: gameDoc.players,
       turn: gameDoc.turn,
+      myTurn: isUsersTurn(userId, gameDoc),
       type: gameDoc.type,
     })
   }
 
   // prune invalid game IDs
   if (invalidGameIds.length > 0) {
-    userDoc.games.filter(id => !invalidGameIds.includes(id))
+    userDoc.games = userDoc.games.filter(id => !invalidGameIds.includes(id))
+    userDoc.save()
   }
 
   return ok(games)
@@ -86,6 +89,7 @@ export async function getGameMetadata(
     players: gameDoc.players,
     turn: gameDoc.turn,
     type: gameDoc.type,
+    myTurn: isUsersTurn(userId, gameDoc),
     created: gameDoc.created,
   })
 }
