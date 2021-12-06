@@ -7,6 +7,8 @@ import fetch from "node-fetch"
 import { GameType, getPrettyGameType } from "Lib/client/game"
 import YesNo from "Components/YesNo"
 import { ResponseCode } from "Lib/server/util"
+import { GameMetadata } from "Lib/client/game/base"
+import Link from "next/link"
 
 interface DashboardProps {
   router: Router
@@ -26,6 +28,7 @@ interface Invite {
 
 interface DashboardState {
   invites: Invite[]
+  games: GameMetadata[]
 }
 
 class Dashboard extends Component<DashboardProps, DashboardState> {
@@ -34,10 +37,11 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
 
     this.state = {
       invites: [],
+      games: [],
     }
   }
 
-  async componentDidMount() {
+  async fetchPendingInvites() {
     // fetch pending invites
     const invitesData: any[] = await fetch("/api/invite/getPending").then(x =>
       x.json()
@@ -46,7 +50,7 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
     console.log(invitesData)
 
     // format invite response
-    const invites: Invite[] = await Promise.all(
+    return await Promise.all(
       invitesData.map<Promise<Invite>>(async invite => {
         // get metadata about the game
         const gameMetadata = await fetch(
@@ -70,17 +74,31 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
         }
       })
     )
+  }
+
+  async fetchOngoingGames() {
+    const games: any[] = await fetch("/api/game").then(x => x.json())
+
+    return games
+  }
+
+  async componentDidMount() {
+    const invites = await this.fetchPendingInvites.bind(this)()
+    const games = await this.fetchOngoingGames.bind(this)()
 
     this.setState({
       invites,
+      games,
     })
   }
 
   render() {
+    let key = 0
+
     const inviteCards = []
     for (const invite of this.state.invites) {
       inviteCards.push(
-        <div className={styles.inviteCard}>
+        <div className={styles.inviteCard} key={key++}>
           <h2>{getPrettyGameType(invite.game.type).title}</h2>
           <p>
             <span>Invited by </span>
@@ -115,12 +133,20 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
     }
 
     const gameCards = []
-    for (let i = 0; i < 4; i++) {
+    for (const game of this.state.games) {
       gameCards.push(
-        <div className={styles.gameCard} key={i}>
-          <h1>Game Name</h1>
-          <span>Your move!</span>
-        </div>
+        <Link passHref href={`/game/${game._id}`}>
+          <a>
+            <div className={styles.gameCard} key={key++}>
+              <h1>{getPrettyGameType(game.type).title}</h1>
+              <span>
+                {game.myTurn
+                  ? "Your turn!"
+                  : "Waiting for someone to make their move..."}
+              </span>
+            </div>
+          </a>
+        </Link>
       )
     }
 
@@ -131,7 +157,11 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
             <h1>Pending Invites</h1>
           </div>
           <div id={styles.invitesListContainer}>
-            <div id={styles.invitesList}>{inviteCards}</div>
+            <div id={styles.invitesList}>
+              {inviteCards.length > 0
+                ? inviteCards
+                : "No pending game invites!"}
+            </div>
           </div>
         </div>
         <div id={styles.paneDivider} />
@@ -140,7 +170,11 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
             <h1>Ongoing Games</h1>
           </div>
           <div id={styles.gamesGalleryContainer}>
-            <div id={styles.gamesGallery}>{gameCards}</div>
+            <div id={styles.gamesGallery}>
+              {gameCards.length > 0
+                ? gameCards
+                : "You aren't in any ongoing games right now."}
+            </div>
           </div>
         </div>
       </div>

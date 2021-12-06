@@ -103,6 +103,50 @@ export async function getPendingInvites(
   return ok(formattedInvites)
 }
 
+async function addUserToGameDoc(userId: string, gameId: string) {
+  try {
+    await Game.updateOne(
+      { _id: gameId },
+      {
+        $push: {
+          players: userId,
+        },
+      }
+    )
+  } catch (e) {
+    throw err({
+      statusCode: ResponseCode.INTERNAL_SERVER_ERROR,
+      message: "Something went wrong while updating player list!",
+    })
+  }
+}
+
+async function addGameToUserDoc(
+  userId: string,
+  gameId: string,
+  inviteId: string
+) {
+  try {
+    await User.updateOne(
+      { _id: userId },
+      {
+        $push: {
+          games: gameId,
+        },
+        $pull: {
+          pendingInvites: inviteId,
+        },
+      }
+    )
+  } catch (e) {
+    console.error(e)
+    throw err({
+      statusCode: ResponseCode.INTERNAL_SERVER_ERROR,
+      message: "Something went wrong while updating user information!",
+    })
+  }
+}
+
 export async function respondToInvite(
   inviteId: string,
   userId: string,
@@ -111,6 +155,7 @@ export async function respondToInvite(
   console.log("respondToInvite: ", { inviteId, userId, response })
   const inviteDoc = await Invite.findById(inviteId)
 
+  // if this is an invalid invite ID, return error
   if (!inviteDoc) {
     return err({
       statusCode: ResponseCode.BAD_REQUEST,
@@ -120,25 +165,19 @@ export async function respondToInvite(
 
   switch (response) {
     case "accept": // add the user to the game
-      const gameDoc = await Game.findById(inviteDoc.gameId)
-
-      // if for some reason the game doesn't exist, just return an error
-      if (!gameDoc) {
-        // delete the invite so the user doesn't have to see it
+      try {
+        await Promise.all([
+          addUserToGameDoc(userId, inviteDoc.gameId),
+          addGameToUserDoc(userId, inviteDoc.gameId, inviteId),
+        ])
+      } catch (e: any) {
+        // delete the invite
         await inviteDoc.delete()
-        return err({
-          statusCode: ResponseCode.INTERNAL_SERVER_ERROR,
-          message: "Something went wrong while accepting the invite!",
-        })
+        return e
       }
 
-      // make sure we don't add the user twice
-      if (!gameDoc.players.includes(userId)) {
-        gameDoc.players.push(userId)
-        await gameDoc.save()
-      }
       break
-    case "decline":
+    case "decline": // don't add the user
       break
     default:
       return err({
