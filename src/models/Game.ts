@@ -1,7 +1,7 @@
 import mongoose, { EnforceDocument } from "mongoose"
 import { nanoid } from "nanoid"
 import { GameInterface } from "Lib/client/game"
-import { TicTacToeGameInterface } from "Lib/client/game/tictactoe"
+import { TicTacToe } from "Lib/client/game/tictactoe"
 
 const GameSchema = new mongoose.Schema<
   GameInterface,
@@ -34,12 +34,12 @@ export default (mongoose.models.Game as mongoose.Model<GameInterface>) ||
 
 export async function createTicTacToeGame(
   players: string[]
-): Promise<EnforceDocument<TicTacToeGameInterface, {}>> {
+): Promise<EnforceDocument<TicTacToe.GameInterface, {}>> {
   return await mongoose.models.Game.create({
     type: "tictactoe",
     players,
     state: {
-      board: ["", "", "", "", "", "", "", ""],
+      board: ["", "", "", "", "", "", "", "", ""],
     },
   })
 }

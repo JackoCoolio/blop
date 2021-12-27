@@ -1,8 +1,11 @@
+import styles from "Styles/GameHandler.module.scss"
 import { Component } from "react"
 import AppContainer from "Components/AppContainer"
 import fetch from "node-fetch"
 import { GameInterface } from "Lib/client/game"
-import { TicTacToe } from "Components/game/TicTacToe"
+import { TicTacToeComponent } from "Components/game/TicTacToe"
+import { Modal } from "Components/Modal"
+import { Button } from "Components/Button"
 
 interface GameHandlerComponentProps {
   gameId: string
@@ -53,14 +56,50 @@ class GameHandler extends Component<
       case "tictactoe":
         // we can assume that this.state.me is defined, because it is defined at the same time as gameInformation
         gameComponent = (
-          <TicTacToe game={this.state.gameInformation} me={this.state.me!} />
+          <TicTacToeComponent
+            game={this.state.gameInformation}
+            me={this.state.me!}
+          />
         )
     }
 
+    let modal
+    if (!!this.state.gameInformation) {
+      if (this.state.gameInformation.winners.length > 0) {
+        const winner = this.state.gameInformation.winners[0]
+        if (this.state.gameInformation.players[winner] === this.state.me) {
+          modal = (
+            <Modal color="green" allowHide>
+              <div id={styles.modalContents}>
+                <h1>You won!</h1>
+                <Button color="blue" href="/create">
+                  Play again
+                </Button>
+              </div>
+            </Modal>
+          )
+        } else {
+          modal = (
+            <Modal color="red" allowHide>
+              <div id={styles.modalContents}>
+                <h1>You lost!</h1>
+                <Button color="blue" href="/create">
+                  Play again
+                </Button>
+              </div>
+            </Modal>
+          )
+        }
+      }
+    }
+
     return (
-      <AppContainer>
-        {this.state.loaded ? gameComponent : <h1>Loading...</h1>}
-      </AppContainer>
+      <>
+        {modal}
+        <AppContainer>
+          {this.state.loaded ? gameComponent : <h1>Loading...</h1>}
+        </AppContainer>
+      </>
     )
   }
 }

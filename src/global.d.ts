@@ -61,3 +61,5 @@ declare module "mongoose-fuzzy-searching" {
 
   export default fuzzyPlugin
 }
+
+export type BlopColor = "blue" | "red" | "green" | "yellow"
