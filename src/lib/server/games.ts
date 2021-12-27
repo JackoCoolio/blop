@@ -1,4 +1,4 @@
-import { isUsersTurn } from "Lib/client/game"
+import { getWinners, isUsersTurn } from "Lib/client/game"
 import { GameMetadata } from "Lib/client/game/base"
 import Game from "Models/Game"
 import User from "Models/User"
@@ -38,6 +38,7 @@ export async function getCurrentGames(
       turn: gameDoc.turn,
       myTurn: isUsersTurn(userId, gameDoc),
       type: gameDoc.type,
+      winners: getWinners(gameDoc),
     })
   }
 
@@ -91,5 +92,6 @@ export async function getGameMetadata(
     type: gameDoc.type,
     myTurn: isUsersTurn(userId, gameDoc),
     created: gameDoc.created,
+    winners: getWinners(gameDoc),
   })
 }

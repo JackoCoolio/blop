@@ -1,7 +1,5 @@
-import {
-  TicTacToeGameInterface,
-  TicTacToeState,
-} from "Lib/client/game/tictactoe"
+import { TicTacToe } from "Lib/client/game/tictactoe"
+import { Winners, isUsersTurn } from "./base"
 
 // an array of game types
 const gameTypes = ["tictactoe"] as const
@@ -9,10 +7,6 @@ const gameTypes = ["tictactoe"] as const
 export type GameType = typeof gameTypes[number]
 export function isGameType(x: any): x is GameType {
   return gameTypes.includes(x)
-}
-
-export function isUsersTurn(userId: string, game: GameInterface): boolean {
-  return game.players[game.turn % game.players.length] === userId
 }
 
 export interface PrettyGameType {
@@ -36,5 +30,25 @@ export function getPrettyGameType(type: string): PrettyGameType {
   }
 }
 
-export type GameState = TicTacToeState
-export type GameInterface = TicTacToeGameInterface
+export type GameState = TicTacToe.State
+export type GameInterface = TicTacToe.GameInterface
+
+export const winCheckers = {
+  tictactoe: TicTacToe.getWinner,
+}
+
+/**
+ * Returns the winners of the given game.
+ * @param game a GameInterface that has a matching WinChecker in `winCheckers`
+ * @returns an array of player indices
+ */
+export function getWinners(game: GameInterface): Winners {
+  const checker = winCheckers[game.type]
+  if (!checker) {
+    return []
+  } else {
+    return checker(game)
+  }
+}
+
+export { isUsersTurn }

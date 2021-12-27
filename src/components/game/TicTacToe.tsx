@@ -1,16 +1,15 @@
 import styles from "Styles/TicTacToe.module.scss"
 import { Game, GameProps } from "Components/game/Game"
 import fetch from "node-fetch"
-import { TicTacToeGameInterface } from "Lib/client/game/tictactoe"
-import update from "immutability-helper"
+import { TicTacToe } from "Lib/client/game/tictactoe"
 import XSvg from "../../../public/ttt-x.svg"
 import OSvg from "../../../public/ttt-o.svg"
 
 interface TicTacToeState {
-  game: TicTacToeGameInterface // i forsee this being an issue, once i add more games
+  game: TicTacToe.GameInterface // i forsee this being an issue, once i add more games
 }
 
-export class TicTacToe extends Game<TicTacToeState> {
+export class TicTacToeComponent extends Game<TicTacToeState> {
   constructor(props: GameProps) {
     super(props)
 
@@ -20,36 +19,19 @@ export class TicTacToe extends Game<TicTacToeState> {
   }
 
   async makeMove(index: number) {
-    if (!this.state.game.myTurn) return
+    if (
+      !this.state.game.myTurn ||
+      !TicTacToe.isValidMove(this.state.game, index)
+    )
+      return
 
-    const piece = this.state.game.turn % 2 == 0 ? "x" : "o"
+    const newState = TicTacToe.applyMove(this.state.game, index)
 
-    const newBoard = [...this.state.game.state.board]
-    newBoard[index] = piece
-
-    const newState = update(this.state, {
-      game: {
-        state: {
-          board: {
-            $set: newBoard,
-          },
-        },
-        turn: {
-          $apply: t => t + 1,
-        },
-        myTurn: {
-          $apply: t => !t,
-        },
-      },
-    })
-
-    this.setState(newState)
+    this.setState({ game: newState })
 
     await fetch(`/api/game/${this.state.game._id}/state`, {
       method: "PATCH",
-      body: JSON.stringify({
-        board: newBoard,
-      }),
+      body: JSON.stringify(index),
     })
   }
 

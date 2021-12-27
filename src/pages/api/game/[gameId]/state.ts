@@ -6,7 +6,8 @@ import {
   authenticationMiddleware,
   AuthenticatedRequest,
 } from "Middleware/loginChecker"
-import { GameInterface, isUsersTurn } from "Lib/client/game"
+import { GameInterface, getWinners, isUsersTurn } from "Lib/client/game"
+import { TicTacToe } from "Lib/client/game/tictactoe"
 
 const handler = nextConnect()
 
@@ -33,6 +34,7 @@ handler.get(
       players: gameDoc.players,
       state: gameDoc.state,
       turn: gameDoc.turn,
+      winners: getWinners(gameDoc),
     }
 
     res.status(ResponseCode.OK).json(out)
@@ -42,7 +44,7 @@ handler.get(
 handler.patch(
   async (req: AuthenticatedRequest & NextApiRequest, res: NextApiResponse) => {
     const gameId = req.query.gameId
-    const gameDoc = await Game.findById(gameId)
+    let gameDoc = await Game.findById(gameId)
 
     if (!gameDoc) {
       console.error("no game doc")
@@ -58,16 +60,23 @@ handler.patch(
       return res.status(ResponseCode.BAD_REQUEST).json({ error })
     }
 
-    gameDoc.state = {
-      ...body,
+    let validMove = false
+    if (gameDoc.type === "tictactoe") {
+      if (TicTacToe.isValidMove(gameDoc, body, req.userId)) {
+        validMove = true
+        gameDoc = TicTacToe.applyMove(gameDoc, body)
+      }
     }
-    gameDoc.turn++
 
-    gameDoc.markModified("state")
-    gameDoc.markModified("turn")
-    await gameDoc.save()
+    if (validMove) {
+      // for some reason, TS thinks gameDoc might be null
+      // AFAIK this is impossible
+      await gameDoc!.save()
 
-    res.status(ResponseCode.NO_CONTENT).end()
+      res.status(ResponseCode.NO_CONTENT).end()
+    } else {
+      res.status(ResponseCode.BAD_REQUEST).json({ message: "Invalid move!" })
+    }
   }
 )
 

@@ -2,7 +2,7 @@ import styles from "Styles/Dashboard.module.scss"
 import { withRouter, Router } from "next/router"
 import { Component } from "react"
 import { parseCookies } from "nookies"
-import { isSessionLoggedIn } from "Lib/server/session"
+import { getUserDocFromSession, isSessionLoggedIn } from "Lib/server/session"
 import fetch from "node-fetch"
 import { GameType, getPrettyGameType } from "Lib/client/game"
 import YesNo from "Components/YesNo"
@@ -12,6 +12,7 @@ import Link from "next/link"
 
 interface DashboardProps {
   router: Router
+  me: string
 }
 
 interface Invite {
@@ -134,16 +135,25 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
 
     const gameCards = []
     for (const game of this.state.games) {
+      let statusText
+      if (game.winners.length > 0) {
+        if (game.players[game.winners[0]] === this.props.me) {
+          statusText = "You won!"
+        } else {
+          statusText = "You lost!"
+        }
+      } else {
+        statusText = game.myTurn
+          ? "Your turn!"
+          : "Waiting for someone to make their move..."
+      }
+
       gameCards.push(
-        <Link passHref href={`/game/${game._id}`}>
+        <Link passHref href={`/game/${game._id}`} key={key++}>
           <a>
-            <div className={styles.gameCard} key={key++}>
+            <div className={styles.gameCard}>
               <h1>{getPrettyGameType(game.type).title}</h1>
-              <span>
-                {game.myTurn
-                  ? "Your turn!"
-                  : "Waiting for someone to make their move..."}
-              </span>
+              <span>{statusText}</span>
             </div>
           </a>
         </Link>
@@ -185,6 +195,7 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
 export async function getServerSideProps({ req }: any) {
   const { session } = parseCookies({ req })
   const isLoggedIn = await isSessionLoggedIn(session)
+  const userDoc = await getUserDocFromSession(session)
 
   if (!isLoggedIn) {
     return {
@@ -195,7 +206,9 @@ export async function getServerSideProps({ req }: any) {
     }
   } else {
     return {
-      props: {},
+      props: {
+        me: userDoc._id,
+      },
     }
   }
 }

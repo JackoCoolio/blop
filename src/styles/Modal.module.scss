@@ -1,0 +1,72 @@
+.modalBackground {
+  position: absolute;
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  pointer-events: all;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+}
+
+.modal {
+  position: relative;
+
+  pointer-events: inherit;
+
+  border: 3px solid;
+  border-radius: 3rem;
+  background-color: var(--blop-gray);
+  padding: 3rem;
+  animation: fadeIn 1s cubic-bezier(0.26, 1.14, 0.51, 0.96) both;
+  animation-delay: 0.5s;
+}
+
+.hidden {
+  animation: fadeOut 1s cubic-bezier(0.26, 1.14, 0.51, 0.96) forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0%;
+    top: 500px;
+  }
+
+  100% {
+    opacity: 100%;
+    top: 0px;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 100%;
+    top: 0px;
+  }
+
+  100% {
+    opacity: 0%;
+    top: 500px;
+  }
+}
+
+.blue {
+  border-color: var(--blop-blue);
+}
+
+.red {
+  border-color: var(--blop-red);
+}
+
+.green {
+  border-color: var(--blop-green);
+}
+
+.yellow {
+  border-color: var(--blop-yellow);
+}
