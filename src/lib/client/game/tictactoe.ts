@@ -67,7 +67,7 @@ export namespace TicTacToe {
     if (!!userId && !isUsersTurn(userId, game)) return false
 
     // if there is a winner, you can't keep playing
-    if (!!getWinner(game)) return false
+    if (getWinner(game).length > 0) return false
 
     return true
   }
